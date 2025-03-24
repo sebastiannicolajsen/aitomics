@@ -1,0 +1,27 @@
+{
+  "name": "aitomics",
+  "version": "0.0.1",
+  "description": "A small library for atomic llm operations with local models",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebastiannicolajsen/aitomics.git"
+  },
+  "author": "sebastian m. nicolajsen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sebastiannicolajsen/aitomics/issues"
+  },
+  "homepage": "https://github.com/sebastiannicolajsen/aitomics#readme",
+  "dependencies": {
+    "axios": "^1.8.3",
+    "hash-it": "^6.0.0",
+    "keypress": "^0.2.1",
+    "yaml": "^2.7.0",
+    "yaml-schema-validator": "^1.2.3"
+  }
+}

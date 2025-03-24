@@ -1,0 +1,10 @@
+prompt:
+  description:
+    - Your task is to categorize using the below categories. Follow all instructions equally.
+    - Your task is to categorize who the audience of the text input is.
+  values:
+    - label: Teacher
+      description: Somebody who teaches others, i.e., through lectures.
+    - label: Student
+      description: Somebody receiving teaching.
+  default_value: unknown
