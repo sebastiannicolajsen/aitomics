@@ -1,6 +1,10 @@
-import { $, ProgrammaticCaller } from "./analysis.js";
+import { ProgrammaticCaller } from "../callers/caller-programmatic.js";
+import { $ } from "../callers/caller-utils.js"
 import hash from "hash-it"
 
+/**
+ * Provides a set of standard callers including the ability to compose them.
+ */
 export const _ = {
     compose: (...all) => {
       const f = all.reduce(

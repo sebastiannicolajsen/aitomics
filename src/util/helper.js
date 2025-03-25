@@ -2,6 +2,12 @@ import fs from "fs";
 import YAML from "yaml";
 import validateSchema from "yaml-schema-validator";
 
+/**
+ * Load YML from file, and validate according to the schema
+ * @param {string} file 
+ * @param {Object} schema 
+ * @returns object resulted from parsing 
+ */
 export function loadFromFile(file, schema) {
   if (typeof file !== "string") throw new Error("Not a file name");
   const data = fs.readFileSync(file, "utf8");
@@ -10,6 +16,11 @@ export function loadFromFile(file, schema) {
   return input;
 }
 
+/**
+ * Validate an object against a schema
+ * @param {Object} obj 
+ * @param {Object} schema 
+ */
 export function validateObject(obj, schema) {
   validateSchema(obj, { schema, logLevel: "error" });
 }
@@ -38,19 +49,26 @@ let promptTemplate = (descriptions, values, default_value) => [
    `The output should be a JSON list, and only a JSON list, do not provide any formatting for the json-object`
 ];
 
-// descriptions (strings), values (label, description), default_value
+/**
+ * Update the default prompt template used.
+ * @param {Function} fun - must take descriptions(strings), values (label, description), default_value
+ */
 export function setPromptTemplate (fun){
     promptTemplate = fun
 }
 
-// parses of format:
-// prompt:
-//  description:
-//  - Some desc
-//  values:
-//  - label: test
-//    description: Description of that label
-//  default_value: unknown
+/**
+ * parses a given prompt from a YML file, must adhere to following format:
+ * prompt:
+ *  description:
+ *  - Some description
+ *  values:
+ *  - label: some label
+ *    description: Description of that label
+ *  default_value: unknown
+ * @param {string} file 
+ * @returns 
+ */
 export function parseCategorizationPromptFromYML(file) {
   if (typeof file !== "string") throw new Error("Not a file name");
   const data = fs.readFileSync(file, "utf8");
