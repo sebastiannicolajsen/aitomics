@@ -34,6 +34,47 @@ export class Response {
   }
 
   /**
+   * Get the caller used to create the transformation
+   * @returns Caller
+   */
+  getCaller(){
+    return this.caller;
+  }
+
+  /**
+   * Get the generator (i.e., the type of generator)
+   * @returns generatingType
+   */
+  getGeneratorType(){
+    return this.generator;
+  }
+  
+  /**
+   * Get the level of the response (i.e., the number of transformation in a potential series of these)
+   * @returns number
+   */
+  getLevel(){
+    return this.level;
+  }
+
+  /**
+   * Get the input used to produce this response
+   * @returns Caller | string
+   */
+  getInput(){
+    return this.input;
+  }
+
+  /**
+   * Determine whether or not this is the first transformation applied to the input
+   * @returns boolean
+   */
+  isRoot(){
+    return this.isRoot;
+  }
+
+
+  /**
    * Compare two responses
    * @param {Response} response 
    * @returns boolean
