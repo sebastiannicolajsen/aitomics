@@ -4,9 +4,9 @@ import validateSchema from "yaml-schema-validator";
 
 /**
  * Load YML from file, and validate according to the schema
- * @param {string} file 
- * @param {Object} schema 
- * @returns object resulted from parsing 
+ * @param {string} file
+ * @param {Object} schema
+ * @returns object resulted from parsing
  */
 export function loadFromFile(file, schema) {
   if (typeof file !== "string") throw new Error("Not a file name");
@@ -18,8 +18,8 @@ export function loadFromFile(file, schema) {
 
 /**
  * Validate an object against a schema
- * @param {Object} obj 
- * @param {Object} schema 
+ * @param {Object} obj
+ * @param {Object} schema
  */
 export function validateObject(obj, schema) {
   validateSchema(obj, { schema, logLevel: "error" });
@@ -41,20 +41,17 @@ const requiredSchema = {
 };
 
 let promptTemplate = (descriptions, values, default_value) => [
-  descriptions.reduce((e, a) => e + a, ""),
-  `Categorize the input given the following labels: ${values
-    .map((e) => `- '${e.label}': ${e.description}`)
-    .reduce((a, e) => `${a} \n ${e}`, "")}`,
-   `You can only utilise the categories above (${values.map(e => `'${e.label}'`)}), but are allowed to use multiple of them. If in doubt use '${default_value}'.`,
-   `The output should be a JSON list, and only a JSON list, do not provide any formatting for the json-object`
+  ...descriptions,
+  ...values.map((v) => `'${v.label}': ${v.descriptions}`),
+  `If nothing is applicable only return the value '${default_value}'`,
 ];
 
 /**
  * Update the default prompt template used.
  * @param {Function} fun - must take descriptions(strings), values (label, description), default_value
  */
-export function setPromptTemplate (fun){
-    promptTemplate = fun
+export function setPromptTemplate(fun) {
+  promptTemplate = fun;
 }
 
 /**
@@ -66,14 +63,14 @@ export function setPromptTemplate (fun){
  *  - label: some label
  *    description: Description of that label
  *  default_value: unknown
- * @param {string} file 
- * @returns 
+ * @param {string} file
+ * @returns
  */
 export function parseCategorizationPromptFromYML(file) {
   if (typeof file !== "string") throw new Error("Not a file name");
   const data = fs.readFileSync(file, "utf8");
   let input = YAML.parse(data);
   validateObject(input, requiredSchema);
-  input = input.prompt
-  return promptTemplate(input.description, input.values, input.default_value );
+  input = input.prompt;
+  return promptTemplate(input.description, input.values, input.default_value);
 }

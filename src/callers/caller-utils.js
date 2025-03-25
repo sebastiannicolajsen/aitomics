@@ -16,7 +16,7 @@ const identityCaller = new IdentityCaller()
  */
 export const $ = (content, id = undefined) => {
   if(content == undefined) return identityCaller;
-  if (Array.isArray(content)) return new LLMCaller(content, id);
+  if (Array.isArray(content) || typeof(content) === "string") return new LLMCaller(content, id);
   if (typeof content === "function") return new ProgrammaticCaller(content, id);
 };
 
