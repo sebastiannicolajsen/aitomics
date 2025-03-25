@@ -1,7 +1,7 @@
 # aitomics
 Aitomics are a simple set of constructs made to interact with LLMs run locally (through LM Studio). They provide traceable transformations and easy comparison of LLM and programmatic / manual agreement. Ensure that the configuration is properly set and model installed. It defaults to the one in `./src/util/fetch/default_config.yml`, but can be overriden, see [further down](#configuring-llm-access).
 
-*This is mostly made for my personal use, but perhaps others can find value in similar atomic operations to brainstorm and produce traceable transformation when working with local llms*
+*This is mostly made for my personal use, but perhaps others can find value in similar atomic operations to brainstorm and produce traceable results/transformations when working with local LLMs*
 
 ## Getting started
 
