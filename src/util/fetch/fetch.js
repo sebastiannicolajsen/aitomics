@@ -58,7 +58,7 @@ export const fetch = async (content, context) => {
       url,
       {
         model: llm_config.model,
-        messages: [format(content, "user"), ...context],
+        messages: [ ...context, format(content, "user")],
         temperature: llm_config.settings.temperature,
         max_tokens: llm_config.settings.max_tokens,
         stream: llm_config.settings.stream,

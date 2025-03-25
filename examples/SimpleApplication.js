@@ -1,10 +1,3 @@
-# aitomics
-AI atomic operations in Javascript for programmatic tasks.
-
-
-## Getting started
-
-```js
 import { $, _ } from "../src/index.js"
 
 // create an LLM caller
@@ -20,7 +13,7 @@ console.log(result.output) // Some_Text_String
 
 // compose multiple callers, using standard library ones: 
 
-const caller2 = _.compose(caller, _.lowerCase)
+const caller2 = _.compose(caller,_.lowerCase)
 
 const result2 = await caller2.run(input)
 console.log(result2.output) // some_text_string
@@ -35,4 +28,3 @@ const upperCase = $((a) => a.toUpperCase())
 const result3 = await upperCase.run(result2)
 console.log(result3.output) // SOME_TEXT_STRING
 
-´´´

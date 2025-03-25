@@ -1,4 +1,4 @@
-import { Response } from "../response/index.js";
+import { Response, generatingType } from "../response/index.js";
 import { Caller } from "../callers/base.js"
 
 /**
