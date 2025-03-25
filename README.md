@@ -1,6 +1,8 @@
 # aitomics
 Aitomics are a simple set of constructs made to interact with LLMs run locally (through LM Studio). They provide traceable transformations and easy comparison of LLM and programmatic / manual agreement. Ensure that the configuration is properly set and model installed. It defaults to the one in `./src/util/fetch/default_config.yml`, but can be overriden, see [further down](#configuring-llm-access).
 
+*This is mostly made for my personal use, but perhaps others can find value in similar atomic operations to brainstorm and produce traceable transformation when working with local llms*
+
 ## Getting started
 
 The library primarily introduces three different constructs:
@@ -45,7 +47,7 @@ const result3 = await upperCase.run(result2)
 console.log(result3.output) // SOME_TEXT_STRING
 ```
 
-Further, `Response` allows you to access the specific `Caller` used and much more (see `/src/response/response.js`) 
+Further, `Response` allows you to access the specific `Caller` used and much more (see `/src/response/response.js`). While you can utilize `$` to construct Callers, you can also do so manually (in addition, `$()` yields an identity caller, producing a `Response` with same input/output). It may also make sense to manually construct `Responses` when needing to migrate to the system (and to apply the `Comparators` described below). 
 
 ### Comparators
 
