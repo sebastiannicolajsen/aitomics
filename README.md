@@ -1,12 +1,9 @@
 # aitomics
-AI atomic operations in Javascript for programmatic tasks.
-
+Aitomics are a simple set of constructs made to interact with LLMs run locally (through LM Studio). They provide traceable transformations and easy comparison of LLM and programmatic / manual agreement. Ensure that the configuration is properly set and model installed. It defaults to the one in `./src/util/fetch/default_config.yml`, but can be overriden, see [further down](#configuring-llm-access).
 
 ## Getting started
 
-Aitomics are a simple set of constructs made to interact with LLMs run locally (through LM Studio). They provide traceable transformations and easy comparison of LLM and programmatic / manual agreement. Ensure that the configuration is properly set and model installed. It defaults to the one in `./src/util/fetch/default_config.yml`, but can be overriden, see [further down](#configuring-llm-access).
-
-The components are constituted through three primary constructs:
+The library primarily introduces three different constructs:
 - [Callers and responses](#callers-and-responses)
 - [Comparators](#comparators)
 
