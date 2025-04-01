@@ -14,6 +14,8 @@ export class Caller {
       existingCallers[id] = this;
     }
 
+    
+
     /**
      * Executes the transformation of the Caller, and returns a Response.
      * @param {Response | string} content 

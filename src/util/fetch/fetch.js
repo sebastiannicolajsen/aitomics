@@ -48,20 +48,23 @@ export const setConfigFromObject = (obj) => {
 /**
  * Fetch response from LLM as described by the default-config.yml, or as overriden by using setConfigFromFile / setConfigFromObject
  * @param {string} content - input to be used as user message 
- * @param {*} context - input used as system messages (must have role described, e.g., system)
+ * @param {[string]} context - input used as system messages (must have role described, e.g., system)
+ * @param {undefined | object} config - used instead of set config if passed, validated against config form
  * @returns 
  */
-export const fetch = async (content, context) => {
-  const url = `${llm_config.path}:${llm_config.port}/${llm_config.endpoint}`;
+export const fetch = async (content, context, config = llm_config) => {
+  if(config !== llm_config) validateObject(config)
+
+  const url = `${config.path}:${config.port}/${config.endpoint}`;
   try {
     const response = await axios.post(
       url,
       {
         model: llm_config.model,
         messages: [ ...context, format(content, "user")],
-        temperature: llm_config.settings.temperature,
-        max_tokens: llm_config.settings.max_tokens,
-        stream: llm_config.settings.stream,
+        temperature: config.settings.temperature,
+        max_tokens: config.settings.max_tokens,
+        stream: config.settings.stream,
       },
       {
         headers: {

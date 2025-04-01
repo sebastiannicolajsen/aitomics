@@ -47,7 +47,7 @@ const result3 = await upperCase.run(result2)
 console.log(result3.output) // SOME_TEXT_STRING
 ```
 
-Further, `Response` allows you to access the specific `Caller` used and much more (see `/src/response/response.js`). While you can utilize `$` to construct Callers, you can also do so manually (in addition, `$()` yields an identity caller, producing a `Response` with same input/output). It may also make sense to manually construct `Responses` when needing to migrate to the system (and to apply the `Comparators` described below). 
+Further, `Response` allows you to access the specific `Caller` used and much more (see `/src/response/response.js`). While you can utilize `$` to construct Callers, you can also do so manually (in addition, `$()` yields an identity caller, producing a `Response` with same input/output). It may also make sense to manually construct `Responses` when needing to migrate to the system (and to apply the `Comparators` described below). See the full details of `Responses` [here](#overview-of-response)
 
 ### Comparators
 
@@ -167,4 +167,20 @@ const config = {
 
 setConfigFromObject(config)
 
+```
+
+
+### Overview of Response
+
+All responses are of the following structure:
+
+```js
+{
+  output: String | Object,
+  caller: Caller,
+  input: String | Response,
+  generator: generatingType, // INPUT, PROGRAMMATIC, CUSTOM
+  root: boolean,
+  level: number
+}
 ```
