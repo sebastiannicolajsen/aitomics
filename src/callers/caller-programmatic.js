@@ -29,7 +29,8 @@ export class ProgrammaticCaller extends Caller {
     try {
       result = await this.fun(input);
     } catch(e){
-      throw new Error(`Failed executing '${this.id}' for (root) input '${input.rootInput()}': ${e.message} `)
+      const root = content instanceof Response ? content.rootInput() : content
+      throw new Error(`Failed executing '${this.id}' for (root) input '${root}': ${e.message} `)
     }
     
     if (result instanceof Response) return result;
