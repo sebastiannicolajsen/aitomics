@@ -25,7 +25,13 @@ export class ProgrammaticCaller extends Caller {
         throw new Error("Unresolved future as input");
       throw new Error(`Illegal input type '${content}'`);
     }
-    const result = await this.fun(input);
+    let result = null;
+    try {
+      result = await this.fun(input);
+    } catch(e){
+      throw new Error(`Failed executing '${this.id}' for (root) input '${input.rootInput()}': ${e.message} `)
+    }
+    
     if (result instanceof Response) return result;
     return new Response(result, this, content);
   }
