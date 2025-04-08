@@ -26,7 +26,7 @@ export class DistanceComparisonModel extends ComparatorModel {
    * @returns number (0-1)
    */
   run(inputa, inputb) {
-    const a = inputa.length < inputb.length ? inputb : inputaa;
+    const a = inputa.length < inputb.length ? inputb : inputa;
     const b = inputa.length < inputb.length ? inputa : inputb;
 
     let sum = 0;

@@ -1,6 +1,6 @@
 {
   "name": "aitomics",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "A small library for atomic llm operations with local models",
   "main": "./src/index.js",
   "type": "module",
