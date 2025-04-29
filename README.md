@@ -62,9 +62,7 @@ const prev_result = result2.input
 console.log(prev_result.output) // Some_Text_String
 ```
 
-For more examples, check out:
-- 📚 `examples/SimpleApplication.js` - Basic usage examples
-- 🔄 `examples/ComparisonApplication.js` - Simple comparison examples
+The example is detailed further under 📚 [`examples/SimpleApplication.js`](examples/SimpleApplication.js) 
 
 ### 2. ⚖️ Comparators
 Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
@@ -91,14 +89,18 @@ const comparison = result2.compare(result1).run(new EqualComparisonModel())
 console.log(comparison) // 0.2 (20% agreement)
 ```
 
+
+
 Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
 
 Note that `KrippendorffsComparisonModel` and `CohensComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters, while `EqualComparatorModel` and `DistanceComparatorModel` are designed for pairwise comparisons.
 
-For more comparison examples, see:
-- 📊 `examples/DistanceComparisonExample.js` - Using distance-based comparisons
-- 🔄 `examples/KrippendorffsComparisonExample.js` - Using Krippendorff's alpha
-- 🤝 `examples/CohensComparisonExample.js` - Using Cohen's kappa
+For more examples, check out:
+- 📚 [Simple Application](examples/SimpleApplication.js) - Basic usage examples
+- 📚 [Comparison Application](examples/ComparisonApplication.js) - Simple comparison examples
+- 📚 [Distance Comparison Example](examples/DistanceComparisonExample.js) - Using distance-based comparisons
+- 📚 [Krippendorff's Comparison Example](examples/KrippendorffsComparisonExample.js) - Using Krippendorff's alpha
+- 📚 [Cohen's Comparison Example](examples/CohensComparisonExample.js) - Using Cohen's kappa
 
 ### 3. 🛠️ Utilities
 
@@ -169,6 +171,18 @@ const config = {
     }
 }
 setConfigFromObject(config)
+```
+
+The config file (`config.yml`) should follow this structure:
+```yaml
+model: llama-3.2-3b-instruct  # The model name to use
+path: https://127.0.0.1       # The base URL for the LLM API
+port: 1234                    # The port number
+endpoint: v1/chat/completions # The API endpoint
+settings:
+  temperature: 0.7            # Controls randomness (0.0 to 1.0)
+  max_tokens: -1              # Maximum tokens to generate (-1 for unlimited)
+  stream: false               # Whether to stream the response
 ```
 
 ## 📋 Response Structure
