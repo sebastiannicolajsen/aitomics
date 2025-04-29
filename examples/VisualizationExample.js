@@ -82,7 +82,7 @@ console.log(`\nKrippendorff's Alpha: ${alpha}`);
 // Generate and display the visualization with custom labels and example data on arrows
 // Set showExampleData to false or omit it to hide data on arrows.
 const { markdown, diagram } = await generateFlowDiagram(
-  [llmResponses, programmaticResponses,programmaticResponses], 
+  [llmResponses, programmaticResponses], 
   {
     labels: ["LLM Processing", "Programmatic Processing"],
     showExampleData: true,
