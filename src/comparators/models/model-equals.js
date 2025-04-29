@@ -24,4 +24,14 @@ export class EqualComparisonModel extends ComparatorModel {
   
       return int / (adis + bdis + int)
     }
-  }
+
+    /**
+     * Compares two responses using exact equality.
+     * @param {Response} responseA - First response to compare.
+     * @param {Response} responseB - Second response to compare.
+     * @returns {ComparisonResult} The comparison result.
+     */
+    compare(responseA, responseB) {
+      // ... existing code ...
+    }
+}

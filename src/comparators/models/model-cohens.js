@@ -74,4 +74,14 @@ export class CohensComparisonModel extends ComparatorModel {
 
     return Math.floor(kappa*100.0)/100;
   }
+
+  /**
+   * Compares two responses using Cohen's Kappa.
+   * @param {Response} responseA - First response to compare.
+   * @param {Response} responseB - Second response to compare.
+   * @returns {ComparisonResult} The comparison result.
+   */
+  compare(responseA, responseB) {
+    // ... existing code ...
+  }
 } 

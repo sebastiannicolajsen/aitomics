@@ -50,4 +50,14 @@ export class DistanceComparisonModel extends ComparatorModel {
 
     return sum / Math.max(a.length, b.length);
   }
+
+  /**
+   * Compares two responses using distance-based comparison.
+   * @param {Response} responseA - First response to compare.
+   * @param {Response} responseB - Second response to compare.
+   * @returns {ComparisonResult} The comparison result.
+   */
+  compare(responseA, responseB) {
+    // ... existing code ...
+  }
 }

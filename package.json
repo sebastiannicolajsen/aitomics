@@ -27,8 +27,10 @@
   },
   "homepage": "https://github.com/sebastiannicolajsen/aitomics#readme",
   "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.4.2",
     "axios": "^1.8.3",
     "hash-it": "^6.0.0",
+    "mermaid": "^11.6.0",
     "yaml": "^2.7.0",
     "yaml-schema-validator": "^1.2.3"
   }

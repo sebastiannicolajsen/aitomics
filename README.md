@@ -12,6 +12,7 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
   - [Utilities](#3--utilities)
     - [YAML-based Prompt Configuration](#-yaml-based-prompt-configuration)
     - [LLM Configuration](#-llm-configuration)
+  - [Visualization](#4---visualization)
 - [Response Structure](#-response-structure)
 
 ## ✨ Features
@@ -105,6 +106,8 @@ For more examples, check out:
 - 📚 [`Distance Comparison Example`](examples/DistanceComparisonExample.js) - Using distance-based comparisons
 - 📚 [`Krippendorff's Comparison Example`](examples/KrippendorffsComparisonExample.js) - Using Krippendorff's alpha
 - 📚 [`Cohen's Comparison Example`](examples/CohensComparisonExample.js) - Using Cohen's kappa
+- 📚 [`Product Review Multi-Label Example`](examples/ProductReviewMultiLabelExample.js) - More complex multi-label comparison using Krippendorff's alpha with Jaccard index.
+- 📚 [`Store Review Comparison Example`](examples/StoreReviewComparisonExample.js) - Example comparing multiple reviewers (with a single label) using Krippendorff's alpha.
 
 ### 3. 🛠️ Utilities
 
@@ -190,27 +193,23 @@ settings:
 ```
 
 ### 4. 📊 Visualization
-Callers can be named to provide better visualization of the transformation pipeline. Each caller in a composition should have a unique, descriptive name:
+The library provides a visualization tool that generates (Mermaid) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:
 
-```js
-const pipeline = _.compose(
-  $("Classify the sentiment as positive, neutral, or negative", "sentiment-classifier"),
-  $((result) => result.toLowerCase(), "normalizer"),
-  $((result) => result === 'positive' ? 1 : result === 'negative' ? -1 : 0, "scorer")
-);
-```
+- The flow of data through different callers, with example data, if needed.
 
-These names are used to:
-- Generate unique IDs for each caller
-- Create visual representations of the transformation pipeline
-- Track the flow of data through multiple transformations
-- Debug and understand complex compositions
+Here's an example of a generated diagram from the `ProductReviewMultiLabel` example:
 
-The visualization system will show:
-- The sequence of transformations
-- Input/output relationships
-- The flow of data through the pipeline
-- Any branching or conditional logic
+![Flow Diagram Example](examples/flow-diagram.svg)
+
+For a complete example of how to generate such visualizations, check out:
+- 📚 [`Visualization Example`](examples/VisualizationExample.js) - Shows how to generate and save flow diagrams
+
+The visualization supports several configuration options:
+- `labels`: Array of labels for each flow path in the same order as the input responses array
+- `showExampleData`: Toggle to show/hide example data on arrows (default: false)
+- `initialInputIndex`: Specify which response to use for example data (default: 0)
+
+This visualization was vibecoded, ensuring a smooth and intuitive representation of the data flow.
 
 ## 📋 Response Structure
 All responses follow this structure:

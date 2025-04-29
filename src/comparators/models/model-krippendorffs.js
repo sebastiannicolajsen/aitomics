@@ -245,4 +245,14 @@ export class KrippendorffsComparisonModel extends ComparatorModel {
 
     return Math.floor(alpha * 1000) / 1000; // Format to three decimals
   }
+
+  /**
+   * Compares two responses using Krippendorff's Alpha.
+   * @param {Response} responseA - First response to compare.
+   * @param {Response} responseB - Second response to compare.
+   * @returns {ComparisonResult} The comparison result.
+   */
+  compare(responseA, responseB) {
+    // ... existing code ...
+  }
 } 
