@@ -1,4 +1,4 @@
-import { ComparatorModel } from "./base.js";
+import { ComparisonModelBase } from "./base.js";
 
 /**
  * Calculates Krippendorff's alpha between multiple reviewers' responses.
@@ -16,7 +16,7 @@ import { ComparatorModel } from "./base.js";
  * value for multi-label data is an *approximation* and not strictly equivalent to more complex
  * multi-label Krippendorff extensions.
  */
-export class KrippendorffsComparisonModel extends ComparatorModel {
+export class KrippendorffsComparisonModel extends ComparisonModelBase {
   /**
    * @param {[string | number]} labels The list of possible labels (will be converted to strings).
    * @param {Function} [weightFn] Optional function `(k, l) => number` returning a value between 0 and 1
@@ -78,7 +78,6 @@ export class KrippendorffsComparisonModel extends ComparatorModel {
    * @returns {number} Krippendorff's alpha score approximation (potentially NaN).
    */
   calculateKrippendorffsAlpha(labels, reviewers, w) {
-
     // Helper function for Jaccard Index (used in multi-label path)
     const calculateJaccard = (setA, setB) => {
         setA = new Set(setA || []);
@@ -233,16 +232,6 @@ export class KrippendorffsComparisonModel extends ComparatorModel {
     }
     const alpha = (p_a - p_e) / (1 - p_e);
 
-    /* // Optional Debug Logging 
-    console.log(`\nKrippendorff's Alpha (${isMultiLabel ? 'Multi-Label Jaccard' : 'Single-Label Weighted'}) Debug Info:`);
-    console.log("Number of items after filtering (n):", n);
-    console.log("Is Multi-Label:", isMultiLabel);
-    console.log("Observed agreement (p_a):", p_a);
-    console.log("Expected agreement (p_e - sum pi(k)^2):", p_e);
-    console.log("Total label assignments counted:", totalLabelAssignments);
-    console.log("Label distribution (pi(k)):", q.map(k => `${k}: ${pi(k).toFixed(3)}`).join(", "));
-    */
-
     return Math.floor(alpha * 1000) / 1000; // Format to three decimals
   }
 
@@ -250,9 +239,18 @@ export class KrippendorffsComparisonModel extends ComparatorModel {
    * Compares two responses using Krippendorff's Alpha.
    * @param {Response} responseA - First response to compare.
    * @param {Response} responseB - Second response to compare.
-   * @returns {ComparisonResult} The comparison result.
+   * @returns {number} The comparison result (0-1).
    */
   compare(responseA, responseB) {
-    // ... existing code ...
+    // Get the outputs from both responses
+    const outputA = responseA.output;
+    const outputB = responseB.output;
+
+    // Handle both string and array outputs
+    const a = Array.isArray(outputA) ? outputA : [outputA];
+    const b = Array.isArray(outputB) ? outputB : [outputB];
+
+    // Use the run method to perform the actual comparison
+    return this.run(a, b);
   }
 } 

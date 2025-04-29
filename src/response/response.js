@@ -1,5 +1,5 @@
 import { Caller } from "../callers/base.js";
-import { Comparator } from "../comparators/comparator.js";
+import { ComparisonModel } from "../comparators/comparator.js";
 
 /**
  * Generating type, i.e., programmatically generated (either using llm or function) as alternative some input
@@ -133,12 +133,12 @@ export class Response {
   }
 
   /**
-   * Create a comparator between this and and another response
+   * Create a comparison model between this and another response
    * @param {Response} b
-   * @returns Comparator
+   * @returns ComparisonModel
    */
   compare(b) {
-    return new Comparator(this, b);
+    return new ComparisonModel(this, b);
   }
 
   

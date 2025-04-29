@@ -1,10 +1,10 @@
-import { ComparatorModel } from "./base.js";
+import { ComparisonModelBase } from "./base.js";
 import { Response } from "../../response/index.js";
 
 /**
  * Calculates Cohen's kappa between two responses
  */
-export class CohensComparisonModel extends ComparatorModel {
+export class CohensComparisonModel extends ComparisonModelBase {
   constructor(value) {
     super(true);
     this.value = String(value);

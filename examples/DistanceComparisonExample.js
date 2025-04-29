@@ -1,5 +1,5 @@
 import { $, _ } from "../src/index.js";
-import { Comparator } from "../src/comparators/comparator.js";
+import { ComparisonModel } from "../src/comparators/index.js";
 import { DistanceComparisonModel } from "../src/comparators/models/model-distance.js";
 
 // Create both an LLM caller and a programmatic caller
@@ -26,11 +26,11 @@ console.log(programmaticResponse.output); // Expected: "positive" - matches "enj
 const orderedList = ["negative", "neutral", "positive"];
 const distanceModel = new DistanceComparisonModel(1, orderedList);
 
-// Create a comparator for the two responses
-const comparator = new Comparator(llmResponse, programmaticResponse);
+// Create a comparison model for the two responses
+const comparisonModel = new ComparisonModel(llmResponse, programmaticResponse);
 
 // Run the comparison
-const similarity = comparator.run(distanceModel);
+const similarity = comparisonModel.run(distanceModel);
 console.log(similarity); // Expected: 1.0 - both callers return "positive"
 
 // Example with a different input
@@ -42,6 +42,6 @@ console.log(llmResponse2.output); // Expected: "negative" - LLM should recognize
 console.log(programmaticResponse2.output); // Expected: "neutral" - no explicit positive/negative keywords matched
 
 // Compare the second set of responses
-const comparator2 = new Comparator(llmResponse2, programmaticResponse2);
-const similarity2 = comparator2.run(distanceModel);
+const comparisonModel2 = new ComparisonModel(llmResponse2, programmaticResponse2);
+const similarity2 = comparisonModel2.run(distanceModel);
 console.log(similarity2); // Expected: 0.5 - one step difference between "negative" and "neutral" 

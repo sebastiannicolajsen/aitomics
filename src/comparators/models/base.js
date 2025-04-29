@@ -1,7 +1,7 @@
 /**
  * Used to determine comparison model used for responses
  */
-export class ComparatorModel {
+export class ComparisonModelBase {
     /**
      * @param {boolean} isMultipleComparison Whether this model is designed for multiple comparisons
      */

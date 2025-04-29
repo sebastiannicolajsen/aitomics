@@ -17,7 +17,7 @@
  */
 
 import { $, _ } from "../src/index.js";
-import { Comparator } from "../src/comparators/comparator.js";
+import { ComparisonModel } from "../src/comparators/index.js";
 import { KrippendorffsComparisonModel } from "../src/comparators/models/model-krippendorffs.js";
 
 // Create a composed LLM caller that:
@@ -72,7 +72,7 @@ console.log(programmaticResponses.map(r => r.output)); // Expected: [1, -1, 0, 1
 const model = new KrippendorffsComparisonModel([-1, 0, 1]);
 
 // Compare the responses using Krippendorff's alpha
-const alpha = Comparator.compareMultiple(
+const alpha = ComparisonModel.compareMultiple(
   llmResponses,
   programmaticResponses,
   model

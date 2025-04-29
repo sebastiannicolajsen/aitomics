@@ -1,5 +1,5 @@
 import { $, _ } from "../src/index.js";
-import { Comparator } from "../src/comparators/comparator.js";
+import { ComparisonModel } from "../src/comparators/index.js";
 import { KrippendorffsComparisonModel } from "../src/comparators/models/model-krippendorffs.js";
 
 // Create both an LLM caller and a programmatic caller for sentiment analysis
@@ -36,6 +36,6 @@ console.log(programmaticResponses.map(r => r.output)); // Expected: ['positive',
 const model = new KrippendorffsComparisonModel(['positive', 'neutral', 'negative']);
 
 // Compare the responses using Krippendorff's alpha
-const alpha = Comparator.compareMultiple(llmResponses, programmaticResponses, model);
+const alpha = ComparisonModel.compareMultiple(llmResponses, programmaticResponses, model);
 
 console.log(alpha); // Expected: 0.647 (substantial agreement across all categories) 

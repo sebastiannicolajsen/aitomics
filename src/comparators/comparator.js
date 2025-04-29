@@ -1,12 +1,12 @@
+import { ComparisonModelBase } from "./models/index.js";
 import { Response } from "../response/index.js";
-import { ComparatorModel } from "./models/index.js";
 
 /**
- * A comparator which compares two Responses who have the same (root) input.
+ * A comparison model which compares two Responses who have the same (root) input.
  */
-export class Comparator {
+export class ComparisonModel {
     /**
-     * Create the comparator for two responses, requires same (root) input in responses.
+     * Create the comparison model for two responses, requires same (root) input in responses.
      * @param {Response} a 
      * @param {Response} b 
      */
@@ -23,7 +23,7 @@ export class Comparator {
    * Pairs multiple Responses. Without match, the values are lost
    * @param {[Response]} a 
    * @param {[Response]} b 
-   * @returns [Comparator]
+   * @returns [ComparisonModel]
    */
   static match(a, b) {
     const aset = {};
@@ -41,67 +41,90 @@ export class Comparator {
     transform(b, bset);
 
     for (const k of Object.keys(aset)) {
-      if (bset[k]) res.push(new Comparator(aset[k], bset[k]));
+      if (bset[k]) res.push(new ComparisonModel(aset[k], bset[k]));
     }
 
     return res;
   }
 
   /**
-   * Compares the two Responses using the supplied comparator model
-   * @param {ComparatorModel} model 
-   * @returns comparison value (according to the individual comparator model)
+   * Compares the two Responses using the supplied comparison model
+   * @param {ComparisonModelBase} model 
+   * @returns comparison value (according to the individual comparison model)
    */
   run(model) {
-    if (!(model instanceof ComparatorModel))
-      throw new Error("Not providing comparator model");
-    if (model.isMultipleComparison)
-      throw new Error("This model is designed for multiple comparisons, use compareMultiple instead");
-    const inputa = Array.isArray(this.a.output)
-      ? this.a.output
-      : [this.a.output];
-    const inputb = Array.isArray(this.b.output)
-      ? this.b.output
-      : [this.b.output];
-    return model.run(inputa, inputb);
+    if (!(model instanceof ComparisonModelBase))
+      throw new Error("Model must be a ComparisonModelBase");
+    return model.compare(this.a, this.b);
   }
 
   /**
-   * Compares two lists of responses using the supplied comparator model
+   * Compares two lists of responses using the supplied comparison model
    * @param {[Response]} responsesA First list of responses
    * @param {[Response]} responsesB Second list of responses
-   * @param {ComparatorModel} model The model to use for comparison
+   * @param {ComparisonModelBase} model The model to use for comparison
    * @returns {number} The comparison result
    */
   static compareMultiple(responsesA, responsesB, model) {
-    if (!Array.isArray(responsesA) || !Array.isArray(responsesB))
-      throw new Error("Both arguments must be arrays of responses");
-    if (!(model instanceof ComparatorModel))
-      throw new Error("Not providing comparator model");
-    if (!model.isMultipleComparison)
-      throw new Error("This model is not designed for multiple comparisons, use run instead");
+    if (!Array.isArray(responsesA)) {
+      throw new Error("First argument must be an array of responses");
+    }
+    if (!Array.isArray(responsesB)) {
+      throw new Error("Second argument must be an array of responses");
+    }
+    if (!(model instanceof ComparisonModelBase))
+      throw new Error("Model must be a ComparisonModelBase");
 
-    // Validate that all elements are Response objects
-    responsesA.forEach((r, i) => {
-      if (!(r instanceof Response))
-        throw new Error(`Element at index ${i} in first array is not a Response object`);
-    });
-    responsesB.forEach((r, i) => {
-      if (!(r instanceof Response))
-        throw new Error(`Element at index ${i} in second array is not a Response object`);
-    });
+    // Extract outputs from responses
+    const outputsA = responsesA.map(r => r.output);
+    const outputsB = responsesB.map(r => r.output);
 
-    // Match the responses using the existing match method
-    const pairs = Comparator.match(responsesA, responsesB);
-    
-    if (pairs.length === 0)
-      throw new Error("No matching responses found between the two lists");
-
-    // Extract outputs from matched pairs
-    const outputsA = pairs.map(pair => pair.a.output);
-    const outputsB = pairs.map(pair => pair.b.output);
-
-    // Let the model handle the aggregation
     return model.run(outputsA, outputsB);
   }
+}
+
+/**
+ * Compares two responses using a comparison model.
+ * @param {Response} responseA - First response to compare.
+ * @param {Response} responseB - Second response to compare.
+ * @returns {Object} Object with a run method that takes a comparison model.
+ */
+export function compare(responseA, responseB) {
+  if (!(responseA instanceof Response)) {
+    throw new Error("First argument must be a Response");
+  }
+  if (!(responseB instanceof Response)) {
+    throw new Error("Second argument must be a Response");
+  }
+  return {
+    /**
+     * Run the comparison using the specified model.
+     * @param {ComparisonModelBase} model
+     * @returns {number} The comparison result.
+     */
+    run(model) {
+      if (!(model instanceof ComparisonModelBase))
+        throw new Error("Model must be a ComparisonModelBase");
+      return model.compare(responseA, responseB);
+    }
+  };
+}
+
+/**
+ * Compares multiple responses using a comparison model.
+ * @param {Array<Response>} responsesA - First array of responses to compare.
+ * @param {Array<Response>} responsesB - Second array of responses to compare.
+ * @param {ComparisonModelBase} model The model to use for comparison
+ * @returns {number} The comparison result.
+ */
+export function compareMultiple(responsesA, responsesB, model) {
+  if (!Array.isArray(responsesA)) {
+    throw new Error("First argument must be an array of responses");
+  }
+  if (!Array.isArray(responsesB)) {
+    throw new Error("Second argument must be an array of responses");
+  }
+  if (!(model instanceof ComparisonModelBase))
+    throw new Error("Model must be a ComparisonModelBase");
+  return model.run(responsesA, responsesB);
 }

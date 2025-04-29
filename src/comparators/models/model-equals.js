@@ -1,10 +1,10 @@
-import { ComparatorModel } from "./base.js"
+import { ComparisonModelBase } from "./base.js"
 
 /**
  * Calculates agreement (when exact matches) between two responses, with both responses weighing equally. 
  * Thus, if an array is passed, the values which constitute the agreement (the average thereof) is n x m (i.e., size of potential disagreements).
  */
-export class EqualComparisonModel extends ComparatorModel {
+export class EqualComparisonModel extends ComparisonModelBase {
     constructor() {
       super()
     }

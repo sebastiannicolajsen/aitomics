@@ -9,7 +9,7 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
 - [Core Concepts](#core-concepts)
   - [Callers and Responses](#callers-and-responses)
     - [Response Structure](#response-structure)
-  - [Comparators](#comparators)
+  - [Comparison Models](#comparison-models)
   - [Utilities](#utilities)
     - [YAML-based Prompt Configuration](#yaml-based-prompt-configuration)
     - [LLM Configuration](#llm-configuration)
@@ -82,10 +82,10 @@ All responses follow this structure:
 }
 ```
 
-### 2. ⚖️ Comparators
+### 2. ⚖️ Comparison Models
 Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
-- ✅ `EqualComparatorModel` for exact string or list matching
-- 📏 `DistanceComparatorModel` for simple agreement (closeness)
+- ✅ `EqualComparisonModel` for exact string or list matching
+- 📏 `DistanceComparisonModel` for simple agreement (closeness)
 - 🤝 `KrippendorffsComparisonModel` for inter-rater reliability (IRR) with single label 
 - 🤝 `CohensComparisonModel` for inter-rater reliability (IRR) with multiple labels, also supports multiple reviewer labels
 
@@ -107,7 +107,7 @@ const comparison = result2.compare(result1).run(new EqualComparisonModel())
 console.log(comparison) // 0.2 (20% agreement)
 ```
 
-Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
+Both `KrippendorffsComparisonModel` and `DistanceComparisonModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
 
 Note that `CohensComparisonModel` and `KrippendorffsComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters.
 

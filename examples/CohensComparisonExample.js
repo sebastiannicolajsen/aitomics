@@ -1,5 +1,5 @@
 import { $, _ } from "../src/index.js";
-import { Comparator } from "../src/comparators/comparator.js";
+import { ComparisonModel } from "../src/comparators/index.js";
 import { CohensComparisonModel } from "../src/comparators/models/model-cohens.js";
 
 // Create both an LLM caller and a programmatic caller for sentiment analysis
@@ -38,9 +38,9 @@ const negativeModel = new CohensComparisonModel("negative");
 const neutralModel = new CohensComparisonModel("neutral");
 
 // Compare the responses using Cohen's kappa for each category
-const positiveKappa = Comparator.compareMultiple(llmResponses, programmaticResponses, positiveModel);
-const negativeKappa = Comparator.compareMultiple(llmResponses, programmaticResponses, negativeModel);
-const neutralKappa = Comparator.compareMultiple(llmResponses, programmaticResponses, neutralModel);
+const positiveKappa = ComparisonModel.compareMultiple(llmResponses, programmaticResponses, positiveModel);
+const negativeKappa = ComparisonModel.compareMultiple(llmResponses, programmaticResponses, negativeModel);
+const neutralKappa = ComparisonModel.compareMultiple(llmResponses, programmaticResponses, neutralModel);
 
 console.log(positiveKappa); // Expected: 0.71 (substantial agreement on positive sentiment)
 console.log(negativeKappa); // Expected: 0.71 (substantial agreement on negative sentiment)

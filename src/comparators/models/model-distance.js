@@ -1,4 +1,4 @@
-import { ComparatorModel } from "./base.js";
+import { ComparisonModelBase } from "./base.js";
 
 /**
  * Distance is an adaptation of the following, i.e., 1 for identical answers, 0.5 for close answers (given metadata), 0 for unmatched.
@@ -7,7 +7,7 @@ import { ComparatorModel } from "./base.js";
  * Based on:
  * Amanda Barany, Nidhi Nasiar, Chelsea Porter, Andres Felipe Zambrano, Alexandra L. Andres, Dara Bright, Mamta Shah, Xiner Liu, Sabrina Gao, Jiayi Zhang, Shruti Mehta, Jaeyoon Choi, Camille Giordano, and Ryan S. Baker. 2024. Chat-GPT for Education Research: Exploring the Potential of Large Language Models for Qualitative Codebook Development. In Artificial Intelligence in Education, Andrew M. Olney, Irene-Angelica Chounta, Zitao Liu, Olga C. Santos, and Ig Ibert Bittencourt (Eds.). Springer Nature Switzerland, Cham, 134–149.
  */
-export class DistanceComparisonModel extends ComparatorModel {
+export class DistanceComparisonModel extends ComparisonModelBase {
   /**
    * Requires an ordered list of potential values to be able to compare distance, and the max distance to define closeness
    * @param {number} distance
@@ -55,9 +55,22 @@ export class DistanceComparisonModel extends ComparatorModel {
    * Compares two responses using distance-based comparison.
    * @param {Response} responseA - First response to compare.
    * @param {Response} responseB - Second response to compare.
-   * @returns {ComparisonResult} The comparison result.
+   * @returns {number} The comparison result (0-1).
    */
   compare(responseA, responseB) {
-    // ... existing code ...
+    // Get the outputs from both responses
+    const outputA = responseA.output;
+    const outputB = responseB.output;
+
+    // Handle both string and array outputs
+    const a = Array.isArray(outputA) ? outputA : [outputA];
+    const b = Array.isArray(outputB) ? outputB : [outputB];
+
+    // Convert all values to strings for comparison
+    const aStr = a.map(v => String(v));
+    const bStr = b.map(v => String(v));
+
+    // Use the run method to perform the actual comparison
+    return this.run(aStr, bStr);
   }
 }
