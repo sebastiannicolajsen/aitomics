@@ -96,11 +96,11 @@ Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom
 Note that `KrippendorffsComparisonModel` and `CohensComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters, while `EqualComparatorModel` and `DistanceComparatorModel` are designed for pairwise comparisons.
 
 For more examples, check out:
-- 📚 [Simple Application](examples/SimpleApplication.js) - Basic usage examples
-- 📚 [Comparison Application](examples/ComparisonApplication.js) - Simple comparison examples
-- 📚 [Distance Comparison Example](examples/DistanceComparisonExample.js) - Using distance-based comparisons
-- 📚 [Krippendorff's Comparison Example](examples/KrippendorffsComparisonExample.js) - Using Krippendorff's alpha
-- 📚 [Cohen's Comparison Example](examples/CohensComparisonExample.js) - Using Cohen's kappa
+- 📚 [`Simple Application`](examples/SimpleApplication.js) - Basic usage examples
+- 📚 [`Comparison Application`](examples/ComparisonApplication.js) - Simple comparison examples
+- 📚 [`Distance Comparison Example`](examples/DistanceComparisonExample.js) - Using distance-based comparisons
+- 📚 [`Krippendorff's Comparison Example`](examples/KrippendorffsComparisonExample.js) - Using Krippendorff's alpha
+- 📚 [`Cohen's Comparison Example`](examples/CohensComparisonExample.js) - Using Cohen's kappa
 
 ### 3. 🛠️ Utilities
 
