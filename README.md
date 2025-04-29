@@ -91,38 +91,6 @@ const comparison = result2.compare(result1).run(new EqualComparisonModel())
 console.log(comparison) // 0.2 (20% agreement)
 ```
 
-#### Cohen's Kappa Example
-```js
-// Create a model for comparing agreement on a specific value
-const model = new CohensComparisonModel("positive")
-
-// Get results from two different raters
-const rater1 = ["positive", "negative", "positive", "neutral"]
-const rater2 = ["positive", "positive", "negative", "neutral"]
-
-// Compare the results
-const kappa = model.run(rater1, rater2)
-console.log(kappa) // 0.5 (50% agreement beyond chance)
-```
-
-#### Krippendorff's Alpha Example
-```js
-// Create a model for comparing agreement on multiple labels
-const model = new KrippendorffsComparisonModel(
-  ["positive", "negative", "neutral"],
-  // Optional custom weight function (defaults to 1 for identical, 0 for different)
-  (k, l) => k === l ? 1 : 0
-)
-
-// Get results from two different raters
-const rater1 = ["positive", "negative", "positive", "neutral"]
-const rater2 = ["positive", "positive", "negative", "neutral"]
-
-// Compare the results
-const alpha = model.run(rater1, rater2)
-console.log(alpha) // 0.667 (66.7% agreement beyond chance)
-```
-
 Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
 
 Note that `KrippendorffsComparisonModel` and `CohensComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters, while `EqualComparatorModel` and `DistanceComparatorModel` are designed for pairwise comparisons.
