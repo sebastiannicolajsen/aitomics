@@ -29,9 +29,18 @@ export class EqualComparisonModel extends ComparisonModelBase {
      * Compares two responses using exact equality.
      * @param {Response} responseA - First response to compare.
      * @param {Response} responseB - Second response to compare.
-     * @returns {ComparisonResult} The comparison result.
+     * @returns {number} The comparison result (0-1).
      */
     compare(responseA, responseB) {
-      // ... existing code ...
+      // Get the outputs from both responses
+      const outputA = responseA.output;
+      const outputB = responseB.output;
+
+      // Handle both string and array outputs
+      const a = Array.isArray(outputA) ? outputA : [outputA];
+      const b = Array.isArray(outputB) ? outputB : [outputB];
+
+      // Use the run method to perform the actual comparison
+      return this.run(a, b);
     }
 }
