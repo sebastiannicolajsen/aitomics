@@ -12,9 +12,16 @@ export class Caller {
       if (existingCallers[id]) throw new Error(`Duplicate Caller entry (${id})`);
       this.id = id;
       existingCallers[id] = this;
+      this._store = []
     }
 
-    
+    #store(response){
+      this._store.push(response)
+    }
+
+    getAllResponses(){
+      return this._store
+    }
 
     /**
      * Executes the transformation of the Caller, and returns a Response.

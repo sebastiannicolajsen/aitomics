@@ -1,108 +1,141 @@
-# aitomics
-Aitomics are a simple set of constructs made to interact with LLMs run locally (through LM Studio). They provide traceable transformations and easy comparison of LLM and programmatic / manual agreement. Ensure that the configuration is properly set and model installed. It defaults to the one in `./src/util/fetch/default_config.yml`, but can be overriden, see [further down](#configuring-llm-access).
+# 🧬 aitomics
+Aitomics is a simple library for interacting with local LLMs (through LM Studio) that provides traceable transformations and basic comparison of LLM outputs with programmatic or manual results. The library is designed to make it easy to work with local LLMs while maintaining transparency in your transformations.
 
-*This is mostly made for my personal use, but perhaps others can find value in similar atomic operations to brainstorm and produce traceable results/transformations when working with local LLMs*
+## 📑 Table of Contents
+- [Features](#-features)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#-prerequisites)
+  - [Installation](#-installation)
+- [Core Concepts](#-core-concepts)
+  - [Callers and Responses](#1--callers-and-responses)
+  - [Comparators](#2--comparators)
+  - [Utilities](#3--utilities)
+    - [YAML-based Prompt Configuration](#-yaml-based-prompt-configuration)
+    - [LLM Configuration](#-llm-configuration)
+- [Response Structure](#-response-structure)
 
-## Getting started
+## ✨ Features
+- 🔄 Traceable transformations with linked response history
+- 🔍 Basic comparison tools for evaluating LLM outputs
+- 🛠️ Simple utility functions for common tasks
+- 🔌 Configurable LLM access
 
-The library primarily introduces three different constructs:
-- [Callers and responses](#callers-and-responses)
-- [Comparators](#comparators)
+## 🚀 Getting Started
 
-Further, [we provide some utility functionality](#utilities)
+### 📋 Prerequisites
+- 🖥️ LM Studio running locally
+- ⚡ Node.js installed
+- 🤖 A local LLM model (defaults to llama-3.2-3b-instruct)
 
-### Callers and Responses
+### 📦 Installation
+```bash
+npm install aitomics
+```
 
-The basic functionality of the library lies in its reuse of `Response` (as a linked list) to be able to trace multiple transformations (made by `Callers`) while allowing to simply apply transformations on the responses. The example is also located in `/examples/SimpleApplication.js`.
+## 🎯 Core Concepts
+
+### 1. 📞 Callers and Responses
+The library's core functionality revolves around `Callers` and `Responses`. A `Response` acts as a linked list, allowing you to trace multiple transformations while maintaining the history of changes. Here's a basic example:
 
 ```js
 import { $, _ } from 'aitomics'
 
-// create an LLM caller
+// Create an LLM caller
 const caller = $("Replace all whitespaces with underscore _ ")
 
 const input = "Some Text String"
 
-// pass an input, receive a response
+// Pass an input, receive a response
 const result = await caller.run(input)
 
-// access the output
+// Access the output
 console.log(result.output) // Some_Text_String
 
-// compose multiple callers, using standard library ones: 
-
+// Compose multiple callers
 const caller2 = _.compose(caller, _.lowerCase)
 
 const result2 = await caller2.run(input)
 console.log(result2.output) // some_text_string
 
-// result2 now contains all transformation applied from initial input, i.e., we can access the older one as such
+// Access previous transformation
 const prev_result = result2.input
 console.log(prev_result.output) // Some_Text_String
-
-// we can also use functions instead of LLM calls and retain the same response structure:
-
-const upperCase = $((a) => a.toUpperCase())
-const result3 = await upperCase.run(result2)
-console.log(result3.output) // SOME_TEXT_STRING
 ```
 
-Further, `Response` allows you to access the specific `Caller` used and much more (see `/src/response/response.js`). While you can utilize `$` to construct Callers, you can also do so manually (in addition, `$()` yields an identity caller, producing a `Response` with same input/output). It may also make sense to manually construct `Responses` when needing to migrate to the system (and to apply the `Comparators` described below). See the full details of `Responses` [here](#overview-of-response)
+For more examples, check out:
+- 📚 `examples/SimpleApplication.js` - Basic usage examples
+- 🔄 `examples/ComparisonApplication.js` - Simple comparison examples
 
-### Comparators
+### 2. ⚖️ Comparators
+Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
+- ✅ `EqualComparatorModel` for exact string or list matching
+- 📏 `DistanceComparatorModel` for simple agreement (closeness)
+- 🤝 `KrippendorffsComparisonModel` for inter-rater reliability (IRR)
+- 🤝 `CohensComparisonModel` for inter-rater reliability (IRR)
 
-From two `Responses` we can also generate a comparison, currently we can use `EqualComparatorModel` to determine agreement in strings or lists, or `DistanceComparatorModel` to determine more flexible agreement (closeness). See individual files (`/src/comparators/models`) for more details. Below is an example of applying the `EqualComparatorModel` (Example also located in `/examples/ComparisonApplication.js`).
+Here's a basic comparison example:
 
 ```js
-// Create a caller which afterwards turn the output into a JSON object
-let caller = $("Take all words and make them elements in a JSON array. Only return the JSON array");
-let composed = _.compose(caller, _.stringToJSON)
+// Create two different transformations
+const caller1 = $("Take all words and make them elements in a JSON array")
+const caller2 = $((i) => i.toUpperCase().split(" ")) // A programmatic caller, which just applies a function to the input
 
 const input = "Some Text String"
 
-let result = await composed.run(input)
+// Get results from both transformations
+const result1 = await caller1.run(input)
+const result2 = await caller2.run(input)
 
-console.log(result.output) // [ 'Some', 'Text', 'String']
-
-// Create a caller which does this using functions, but also turns the string into uppercase:
-const fun = $((i) => i.toUpperCase().split(" "))
-
-const result2 = await fun.run(input)
-console.log(result2.output) // ['SOME', 'TEXT', 'STRING']
-
-// Now compare the two results:
-let comp = result2.compare(result)
-// Using here, an EqualsComparison (i.e., all elements must match)
-let comparison = comp.run(new EqualComparisonModel())
-console.log(comparison) // 0
-
-// Now recreate LLM caller where only first word is turned into uppercase:
-caller = $("Take all words and make them elements in a JSON array. Only return the JSON array. Make first word all uppercase, rest lower case. ");
-composed = _.compose(caller, _.stringToJSON)
-
-result = await composed.run(input)
-console.log(result.output) // ['SOME', 'Text', 'String']
-
-// repeat comparison:
-comp = result2.compare(result)
-comparison = comp.run(new EqualComparisonModel())
-// Given that there are a total of 6 elements, but only agreement with a single one, meaning there's four disagreements, we get 0.2 (a fifth agreement)
-console.log(comparison) // 0.2
+// Compare the results
+const comparison = result2.compare(result1).run(new EqualComparisonModel())
+console.log(comparison) // 0.2 (20% agreement)
 ```
 
-More functionality lies in the comparators, e.g., `match` allowing you to match two sets of responses and generate multiple comparators at once (see `/src/comparators/comparator.js` and `/src/comparators/models/` )
-
-### Utilities
-
-While you can simply read files as plain text and create `Callers`, aitomics also allows you to read yml files of a certain format using:
-
+#### Cohen's Kappa Example
 ```js
-import { parseCategorizationPromptFromYML } from 'aitomics'
+// Create a model for comparing agreement on a specific value
+const model = new CohensComparisonModel("positive")
 
-parseCategorizationPromptFromYML("filename.yml")
+// Get results from two different raters
+const rater1 = ["positive", "negative", "positive", "neutral"]
+const rater2 = ["positive", "positive", "negative", "neutral"]
+
+// Compare the results
+const kappa = model.run(rater1, rater2)
+console.log(kappa) // 0.5 (50% agreement beyond chance)
 ```
 
-From this, you can structure prompts as follows for categorisation tasks:
+#### Krippendorff's Alpha Example
+```js
+// Create a model for comparing agreement on multiple labels
+const model = new KrippendorffsComparisonModel(
+  ["positive", "negative", "neutral"],
+  // Optional custom weight function (defaults to 1 for identical, 0 for different)
+  (k, l) => k === l ? 1 : 0
+)
+
+// Get results from two different raters
+const rater1 = ["positive", "negative", "positive", "neutral"]
+const rater2 = ["positive", "positive", "negative", "neutral"]
+
+// Compare the results
+const alpha = model.run(rater1, rater2)
+console.log(alpha) // 0.667 (66.7% agreement beyond chance)
+```
+
+Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
+
+Note that `KrippendorffsComparisonModel` and `CohensComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters, while `EqualComparatorModel` and `DistanceComparatorModel` are designed for pairwise comparisons.
+
+For more comparison examples, see:
+- 📊 `examples/DistanceComparisonExample.js` - Using distance-based comparisons
+- 🔄 `examples/KrippendorffsComparisonExample.js` - Using Krippendorff's alpha
+- 🤝 `examples/CohensComparisonExample.js` - Using Cohen's kappa
+
+### 3. 🛠️ Utilities
+
+#### 📝 YAML-based Prompt Configuration
+You can structure your prompts using YAML files:
 
 ```yml
 prompt:
@@ -117,42 +150,45 @@ prompt:
     default_value: unknown
 ```
 
-
-This will be parsed by the default `template` parser, which can be overriden using `setPromptTemplate`. the template is any function `(descriptions, values, default_value)` (where values are objects with attributes `label` and `description`). Per default, the prompt template is a quite simply transformation with few additions:
-
+Usage:
 ```js
-// produces descriptions as individual context messages, and maps labels to strings, while adding a sentence about the default value.
-[
+import { parseCategorizationPromptFromYML } from 'aitomics'
+parseCategorizationPromptFromYML("filename.yml")
+```
+
+The default prompt template is a simple transformation that:
+1. Takes the descriptions as individual context messages
+2. Maps labels to strings
+3. Adds a sentence about the default value
+
+You can override this template using `setPromptTemplate`. The template function should have the signature:
+```js
+(descriptions: string[], values: {label: string, description: string}[], default_value: string) => string[]
+```
+
+Example of overriding the template:
+```js
+import { setPromptTemplate } from 'aitomics'
+
+setPromptTemplate((descriptions, values, default_value) => [
+  "Please categorize the following text:",
   ...descriptions,
-  ...values.map((v) => `'${v.label}': ${v.descriptions}`),
-  `If nothing is applicable only return the value '${default_value}'`,
-]
+  "Available categories:",
+  ...values.map(v => `- ${v.label}: ${v.description}`),
+  `If none of the above categories fit, use: ${default_value}`
+])
 ```
 
-
-### Configuring LLM access
-By default aitomic operations apply `./src/util/fetch/default_config.yml` to determine where to request LLM calls. The settings look like the following, expecting a `llama-3.2-3b-instruct model`:
-
-```yml
-model: llama-3.2-3b-instruct
-path: http://127.0.0.1
-port: 1234
-endpoint: v1/chat/completions
-settings:
-  temperature: 0.7
-  max_tokens: -1
-  stream: false
-```
-
-You can override this by creating a similar config file in your project and update the internal config. You can also update the config via an object. Both approaches are illustrated here:
+#### 🔌 LLM Configuration
+By default, aitomics uses `./src/util/fetch/default_config.yml` for LLM settings. You can override this by:
 
 ```js
-
 import { setConfigFromFile, setConfigFromObject } from 'aitomics'
-...
-setConfigFromFile("./<your configuration file>.yml")
-...
 
+// Using a file
+setConfigFromFile("./config.yml")
+
+// Or using an object
 const config = {
     model: "llama-3.2-3b-instruct",
     path: "https://127.0.01",
@@ -164,21 +200,16 @@ const config = {
         stream: false
     }
 }
-
 setConfigFromObject(config)
-
 ```
 
-
-### Overview of Response
-
-All responses are of the following structure:
-
+## 📋 Response Structure
+All responses follow this structure:
 ```js
 {
-  output: String | Object,
+  output: String | Object,
   caller: Caller,
-  input: String | Response,
+  input: String | Response,
   generator: generatingType, // INPUT, PROGRAMMATIC, CUSTOM
   root: boolean,
   level: number

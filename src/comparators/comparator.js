@@ -41,7 +41,7 @@ export class Comparator {
     transform(b, bset);
 
     for (const k of Object.keys(aset)) {
-      if (bset[k]) res.append(new Comparator(aset[k], bset[k]));
+      if (bset[k]) res.push(new Comparator(aset[k], bset[k]));
     }
 
     return res;
@@ -55,6 +55,8 @@ export class Comparator {
   run(model) {
     if (!(model instanceof ComparatorModel))
       throw new Error("Not providing comparator model");
+    if (model.isMultipleComparison)
+      throw new Error("This model is designed for multiple comparisons, use compareMultiple instead");
     const inputa = Array.isArray(this.a.output)
       ? this.a.output
       : [this.a.output];
@@ -62,5 +64,34 @@ export class Comparator {
       ? this.b.output
       : [this.b.output];
     return model.run(inputa, inputb);
+  }
+
+  /**
+   * Compares two lists of responses using the supplied comparator model
+   * @param {[Response]} responsesA First list of responses
+   * @param {[Response]} responsesB Second list of responses
+   * @param {ComparatorModel} model The model to use for comparison
+   * @returns {number} The comparison result
+   */
+  static compareMultiple(responsesA, responsesB, model) {
+    if (!Array.isArray(responsesA) || !Array.isArray(responsesB))
+      throw new Error("Both arguments must be arrays of responses");
+    if (!(model instanceof ComparatorModel))
+      throw new Error("Not providing comparator model");
+    if (!model.isMultipleComparison)
+      throw new Error("This model is not designed for multiple comparisons, use run instead");
+
+    // Match the responses using the existing match method
+    const pairs = Comparator.match(responsesA, responsesB);
+    
+    if (pairs.length === 0)
+      throw new Error("No matching responses found between the two lists");
+
+    // Extract outputs from matched pairs
+    const outputsA = pairs.map(pair => pair.a.output);
+    const outputsB = pairs.map(pair => pair.b.output);
+
+    // Let the model handle the aggregation
+    return model.run(outputsA, outputsB);
   }
 }

@@ -12,11 +12,20 @@ export class DistanceComparisonModel extends ComparatorModel {
    * Requires an ordered list of potential values to be able to compare distance, and the max distance to define closeness
    * @param {number} distance
    * @param {[string]} orderedList
+   * @param {Function} [weightFn] Optional function to determine weight between two values. Defaults to 1 for identical, 0.5 for close, 0 for unmatched
    */
-  constructor(distance, orderedList) {
+  constructor(distance, orderedList, weightFn) {
     super();
     this.distance = distance;
     this.orderedList = orderedList;
+    this.weightFn = weightFn || ((k, l) => {
+      if (k === l) return 1;
+      const kIndex = this.orderedList.indexOf(k);
+      const lIndex = this.orderedList.indexOf(l);
+      if (kIndex === -1 || lIndex === -1) return 0;
+      const dist = Math.abs(kIndex - lIndex);
+      return dist <= this.distance ? 0.5 : 0;
+    });
   }
 
   /**
@@ -34,16 +43,7 @@ export class DistanceComparisonModel extends ComparatorModel {
       const start = this.orderedList.indexOf(e);
       let value = 0;
       for (const f of b) {
-        if (this.orderedList[start] === f) {
-          value = 1;
-          break;
-        }
-        const prefix = start - this.distance < 0 ? 0 : start - this.distance;
-        const suffix = start + this.distance;
-        if (this.orderedList.slice(prefix, suffix).includes(f)) {
-          value = 0.5;
-          break;
-        }
+        value = Math.max(value, this.weightFn(e, f));
       }
       sum += value;
     }

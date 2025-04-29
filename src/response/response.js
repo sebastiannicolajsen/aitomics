@@ -14,7 +14,6 @@ export const generatingType = Object.freeze({
  * A response to track previous transformations applied through Callers
  */
 export class Response {
-
   /**
    * Create a response
    * @param {Object | string} output - the generated output
@@ -37,7 +36,7 @@ export class Response {
    * Get the caller used to create the transformation
    * @returns Caller
    */
-  getCaller(){
+  getCaller() {
     return this.caller;
   }
 
@@ -45,15 +44,15 @@ export class Response {
    * Get the generator (i.e., the type of generator)
    * @returns generatingType
    */
-  getGeneratorType(){
+  getGeneratorType() {
     return this.generator;
   }
-  
+
   /**
    * Get the level of the response (i.e., the number of transformation in a potential series of these)
    * @returns number
    */
-  getLevel(){
+  getLevel() {
     return this.level;
   }
 
@@ -61,7 +60,7 @@ export class Response {
    * Get the input used to produce this response
    * @returns Caller | string
    */
-  getInput(){
+  getInput() {
     return this.input;
   }
 
@@ -69,14 +68,13 @@ export class Response {
    * Determine whether or not this is the first transformation applied to the input
    * @returns boolean
    */
-  isRoot(){
+  isRoot() {
     return this.isRoot;
   }
 
-
   /**
    * Compare two responses
-   * @param {Response} response 
+   * @param {Response} response
    * @returns boolean
    */
   equals(response) {
@@ -99,10 +97,10 @@ export class Response {
     return curr;
   }
 
- /**
-  * Transforms the response to a string of [caller id]: output (# which the response is in chain)
-  * @returns string
-  */
+  /**
+   * Transforms the response to a string of [caller id]: output (# which the response is in chain)
+   * @returns string
+   */
   toString() {
     return `[${this.caller.id}]: '${this.output}' (${this.level})`;
   }
@@ -110,7 +108,7 @@ export class Response {
   /**
    * Provides a string version of all nested responses.
    * @param {undefined | boolean} newline - whether or not to provide newline inbetween
-   * @returns string 
+   * @returns string
    */
   toStringExpanded(newline = true) {
     let str = "";
@@ -121,19 +119,33 @@ export class Response {
     }
     return str;
   }
+  /**
+   * to provide a shallow copy for json (includes caller simply as id)
+   */
+  toJSON() {
+    return {
+      output: this.output,
+      caller: this.caller.id,
+      input: this.input,
+      root: this.root,
+      level: this.level
+    }
+  }
 
   /**
    * Create a comparator between this and and another response
-   * @param {Response} b 
+   * @param {Response} b
    * @returns Comparator
    */
   compare(b) {
     return new Comparator(this, b);
   }
 
+  
+
   /**
    * Parses an Object into a Response
-   * @param {Object} obj 
+   * @param {Object} obj
    * @returns Response
    */
   static parse(obj) {
