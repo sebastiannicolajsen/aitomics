@@ -77,6 +77,8 @@ const alpha = Comparator.compareMultiple(
   model
 );
 
+console.log(`\nKrippendorff's Alpha: ${alpha}`);
+
 // Generate and display the visualization with custom labels and example data on arrows
 // Set showExampleData to false or omit it to hide data on arrows.
 const { markdown, diagram } = await generateFlowDiagram(
@@ -89,13 +91,11 @@ const { markdown, diagram } = await generateFlowDiagram(
 );
 
 // Print the markdown
-console.log("\nMermaid Markdown:");
 console.log(markdown);
 
 // Save the diagram to a file
 const diagramPath = path.join(process.cwd(), 'examples', 'flow-diagram.svg');
 fs.writeFileSync(diagramPath, diagram);
-console.log(`\nDiagram saved to: ${diagramPath}`);
 
-console.log(`\nKrippendorff's Alpha: ${alpha}`);
+
 

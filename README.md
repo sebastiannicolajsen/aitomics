@@ -2,18 +2,18 @@
 Aitomics is a simple library for interacting with local LLMs (through LM Studio) that provides traceable transformations and basic comparison of LLM outputs with programmatic or manual results. The library is designed to make it easy to work with local LLMs while maintaining transparency in your transformations.
 
 ## 📑 Table of Contents
-- [Features](#-features)
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#-prerequisites)
-  - [Installation](#-installation)
-- [Core Concepts](#-core-concepts)
-  - [Callers and Responses](#1--callers-and-responses)
-  - [Comparators](#2--comparators)
-  - [Utilities](#3--utilities)
-    - [YAML-based Prompt Configuration](#-yaml-based-prompt-configuration)
-    - [LLM Configuration](#-llm-configuration)
-  - [Visualization](#4---visualization)
-- [Response Structure](#-response-structure)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Core Concepts](#core-concepts)
+  - [Callers and Responses](#callers-and-responses)
+    - [Response Structure](#response-structure)
+  - [Comparators](#comparators)
+  - [Utilities](#utilities)
+    - [YAML-based Prompt Configuration](#yaml-based-prompt-configuration)
+    - [LLM Configuration](#llm-configuration)
+  - [Visualization](#visualization)
 
 ## ✨ Features
 - 🔄 Traceable transformations with linked response history
@@ -63,9 +63,22 @@ const prev_result = result2.input
 console.log(prev_result.output) // Some_Text_String
 ```
 
-Each caller must have a unique ID. If no label is provided, a hash is generated automatically. However, if you create multiple callers with the same functionality, you must provide unique labels to avoid conflicts. Different functionality callers can exist without labels, but duplicate unlabeled callers will throw an error. The label is also used for visualization purposes, helping to create clear and descriptive representations of the transformation pipeline as described in the [Visualization](#4--visualization) section.
+Each caller must have a unique ID. If no label is provided, a hash is generated automatically. However, if you create multiple callers with the same functionality, you must provide unique labels to avoid conflicts. Different functionality callers can exist without labels, but duplicate unlabeled callers will throw an error. The label is also used for visualization purposes, helping to create clear and descriptive representations of the transformation pipeline as described in the [Visualization](#visualization) section.
 
 The example is detailed further under 📚 [`examples/SimpleApplication.js`](examples/SimpleApplication.js) 
+
+#### Response Structure
+All responses follow this structure:
+```js
+{
+  output: String | Object,
+  caller: Caller,
+  input: String | Response,
+  generator: generatingType, // INPUT, PROGRAMMATIC, CUSTOM
+  root: boolean,
+  level: number
+}
+```
 
 ### 2. ⚖️ Comparators
 Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
@@ -199,7 +212,7 @@ The library provides a visualization tool that generates (Mermaid) flow diagrams
 
 Here's an example of a generated diagram from the `ProductReviewMultiLabel` example:
 
-![Flow Diagram Example](examples/flow-diagram.svg)
+![Flow Diagram Example](examples/flow-diagram.svg){width=50%}
 
 For a complete example of how to generate such visualizations, check out:
 - 📚 [`Visualization Example`](examples/VisualizationExample.js) - Shows how to generate and save flow diagrams
@@ -209,17 +222,4 @@ The visualization supports several configuration options:
 - `showExampleData`: Toggle to show/hide example data on arrows (default: false)
 - `initialInputIndex`: Specify which response to use for example data (default: 0)
 
-This visualization was vibecoded, ensuring a smooth and intuitive representation of the data flow.
-
-## 📋 Response Structure
-All responses follow this structure:
-```js
-{
-  output: String | Object,
-  caller: Caller,
-  input: String | Response,
-  generator: generatingType, // INPUT, PROGRAMMATIC, CUSTOM
-  root: boolean,
-  level: number
-}
-```
+Using the visualization function requires a variable list of `Response` (lists) as input which is used to trace the transformation. Output is both the markdown and generated svg
