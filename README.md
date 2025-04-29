@@ -26,7 +26,7 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
-- 🖥️ LM Studio running locally
+- 🖥️ [LM Studio](http://LMstudio.ai) running locally
 - ⚡ Node.js installed
 - 🤖 A local LLM model (defaults to llama-3.2-3b-instruct)
 
