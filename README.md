@@ -212,7 +212,7 @@ The library provides a visualization tool that generates (Mermaid) flow diagrams
 
 Here's an example of a generated diagram from the `ProductReviewMultiLabel` example:
 
-![Flow Diagram Example](examples/flow-diagram.svg){width=50%}
+<img src="examples/flow-diagram.svg" width="25%" alt="Flow Diagram Example">
 
 For a complete example of how to generate such visualizations, check out:
 - 📚 [`Visualization Example`](examples/VisualizationExample.js) - Shows how to generate and save flow diagrams
@@ -222,4 +222,4 @@ The visualization supports several configuration options:
 - `showExampleData`: Toggle to show/hide example data on arrows (default: false)
 - `initialInputIndex`: Specify which response to use for example data (default: 0)
 
-Using the visualization function requires a variable list of `Response` (lists) as input which is used to trace the transformation. Output is both the markdown and generated svg
+Using the visualization function requires a variable list of `Response` (lists) as input which is used to trace the transformation. Output is both the markdown and generated svg.
