@@ -217,7 +217,7 @@ Here's an example of a generated diagram from the `ProductReviewMultiLabel` exam
 </div>
 
 For a complete example of how to generate such visualizations, check out:
-- 📚 [`Visualization Example`](examples/VisualizationExample.js) - Shows how to generate and save flow diagrams
+- 📚 [`Visualization Example`](examples/VisualizationExample.js?) - Shows how to generate and save flow diagrams
 
 The visualization supports several configuration options:
 - `labels`: Array of labels for each flow path in the same order as the input responses array
