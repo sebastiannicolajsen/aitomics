@@ -212,7 +212,9 @@ The library provides a visualization tool that generates (Mermaid) flow diagrams
 
 Here's an example of a generated diagram from the `ProductReviewMultiLabel` example:
 
-<img src="examples/flow-diagram.svg" width="25%" alt="Flow Diagram Example">
+<div align="center">
+  <img src="examples/flow-diagram.svg" width="50%" alt="Flow Diagram Example">
+</div>
 
 For a complete example of how to generate such visualizations, check out:
 - 📚 [`Visualization Example`](examples/VisualizationExample.js) - Shows how to generate and save flow diagrams
