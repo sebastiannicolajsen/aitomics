@@ -15,11 +15,13 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
     - [LLM Configuration](#llm-configuration)
   - [Visualization](#visualization)
 
-## ✨ Features
+## ✨ Features / TODO
 - 🔄 Traceable transformations with linked response history
 - 🔍 Basic comparison tools for evaluating LLM outputs
 - 🛠️ Simple utility functions for common tasks
 - 🔌 Configurable LLM access
+- 📊 Flow diagram visualization of transformation pipelines
+- ❌ Response serialization for continuous data processing (TBD)
 
 ## 🚀 Getting Started
 
