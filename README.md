@@ -206,7 +206,7 @@ settings:
 ```
 
 ### 4. 📊 Visualization
-The library provides a visualization tool that generates (Mermaid) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:
+The library provides a visualization tool that generates [Mermaid](https://www.mermaidchart.com/play) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:
 
 - The flow of data through different callers, with example data, if needed.
 
