@@ -7,7 +7,7 @@ import { Response } from "../../response/index.js";
 export class CohensComparisonModel extends ComparatorModel {
   constructor(value) {
     super(true);
-    this.value = value;
+    this.value = String(value);
   }
 
   /**
@@ -17,7 +17,13 @@ export class CohensComparisonModel extends ComparatorModel {
    * @returns number (0-1)
    */
   run(inputa, inputb) {
-    return this.calculateCohensKappa(this.value, inputa, inputb);
+    // Convert all numeric values to strings, handling arrays recursively
+    const convertToString = (arr) => arr.map(v => {
+      if (v === null || v === undefined) return v;
+      if (Array.isArray(v)) return convertToString(v);
+      return String(v);
+    });
+    return this.calculateCohensKappa(this.value, convertToString(inputa), convertToString(inputb));
   }
 
   /**

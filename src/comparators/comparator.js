@@ -34,7 +34,7 @@ export class Comparator {
       i.forEach((e) => {
         if (!(e instanceof Response))
           throw new Error("List contains non-response type");
-        set[e.input] = e;
+        set[e.rootInput()] = e;
       });
 
     transform(a, aset);
@@ -80,6 +80,16 @@ export class Comparator {
       throw new Error("Not providing comparator model");
     if (!model.isMultipleComparison)
       throw new Error("This model is not designed for multiple comparisons, use run instead");
+
+    // Validate that all elements are Response objects
+    responsesA.forEach((r, i) => {
+      if (!(r instanceof Response))
+        throw new Error(`Element at index ${i} in first array is not a Response object`);
+    });
+    responsesB.forEach((r, i) => {
+      if (!(r instanceof Response))
+        throw new Error(`Element at index ${i} in second array is not a Response object`);
+    });
 
     // Match the responses using the existing match method
     const pairs = Comparator.match(responsesA, responsesB);

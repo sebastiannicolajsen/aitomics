@@ -35,13 +35,13 @@ npm install aitomics
 ## 🎯 Core Concepts
 
 ### 1. 📞 Callers and Responses
-The library's core functionality revolves around `Callers` and `Responses`. A `Response` acts as a linked list, allowing you to trace multiple transformations while maintaining the history of changes. Here's a basic example:
+The library's core functionality revolves around `Callers` and `Responses`. A `Response` acts as a linked list, allowing you to trace multiple transformations while maintaining the history of changes. Here's a basic example (where we explicitly name the caller):
 
 ```js
 import { $, _ } from 'aitomics'
 
 // Create an LLM caller
-const caller = $("Replace all whitespaces with underscore _ ")
+const caller = $("Replace all whitespaces with underscore _ ", "whitespace-replacer-1")
 
 const input = "Some Text String"
 
@@ -62,14 +62,16 @@ const prev_result = result2.input
 console.log(prev_result.output) // Some_Text_String
 ```
 
+Each caller must have a unique ID. If no label is provided, a hash is generated automatically. However, if you create multiple callers with the same functionality, you must provide unique labels to avoid conflicts. Different functionality callers can exist without labels, but duplicate unlabeled callers will throw an error. The label is also used for visualization purposes, helping to create clear and descriptive representations of the transformation pipeline as described in the [Visualization](#4--visualization) section.
+
 The example is detailed further under 📚 [`examples/SimpleApplication.js`](examples/SimpleApplication.js) 
 
 ### 2. ⚖️ Comparators
 Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
 - ✅ `EqualComparatorModel` for exact string or list matching
 - 📏 `DistanceComparatorModel` for simple agreement (closeness)
-- 🤝 `KrippendorffsComparisonModel` for inter-rater reliability (IRR)
-- 🤝 `CohensComparisonModel` for inter-rater reliability (IRR)
+- 🤝 `KrippendorffsComparisonModel` for inter-rater reliability (IRR) with single label 
+- 🤝 `CohensComparisonModel` for inter-rater reliability (IRR) with multiple labels, also supports multiple reviewer labels
 
 Here's a basic comparison example:
 
@@ -89,11 +91,13 @@ const comparison = result2.compare(result1).run(new EqualComparisonModel())
 console.log(comparison) // 0.2 (20% agreement)
 ```
 
-
-
 Both `KrippendorffsComparisonModel` and `DistanceComparatorModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.
 
-Note that `KrippendorffsComparisonModel` and `CohensComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters, while `EqualComparatorModel` and `DistanceComparatorModel` are designed for pairwise comparisons.
+Note that `CohensComparisonModel` and `KrippendorffsComparisonModel` are multi-response comparison models, meaning they can handle multiple responses from different raters.
+
+**Krippendorff's Alpha Handling:** The `KrippendorffsComparisonModel` uses a hybrid approach:
+*   For **single-label data** (like numeric scores or single categories), it applies the standard Krippendorff's calculation and respects the provided `weightFn` for nuanced agreement.
+*   For **multi-label data** (where reviewers provide arrays of labels), it calculates observed agreement using the Jaccard index between label sets, providing a more structurally appropriate measure. In this multi-label mode, the `weightFn` is ignored, and the expected agreement calculation uses a simplified formula, making the resulting alpha an approximation.
 
 For more examples, check out:
 - 📚 [`Simple Application`](examples/SimpleApplication.js) - Basic usage examples
@@ -184,6 +188,29 @@ settings:
   max_tokens: -1              # Maximum tokens to generate (-1 for unlimited)
   stream: false               # Whether to stream the response
 ```
+
+### 4. 📊 Visualization
+Callers can be named to provide better visualization of the transformation pipeline. Each caller in a composition should have a unique, descriptive name:
+
+```js
+const pipeline = _.compose(
+  $("Classify the sentiment as positive, neutral, or negative", "sentiment-classifier"),
+  $((result) => result.toLowerCase(), "normalizer"),
+  $((result) => result === 'positive' ? 1 : result === 'negative' ? -1 : 0, "scorer")
+);
+```
+
+These names are used to:
+- Generate unique IDs for each caller
+- Create visual representations of the transformation pipeline
+- Track the flow of data through multiple transformations
+- Debug and understand complex compositions
+
+The visualization system will show:
+- The sequence of transformations
+- Input/output relationships
+- The flow of data through the pipeline
+- Any branching or conditional logic
 
 ## 📋 Response Structure
 All responses follow this structure:
