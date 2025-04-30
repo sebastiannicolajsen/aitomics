@@ -1,5 +1,5 @@
 import { Response } from "../response/index.js";
-import { ComparatorModel } from "../comparators/models/index.js";
+import { ComparisonModelBase } from "../comparators/models/index.js";
 import mermaid from 'mermaid';
 import { exec } from 'child_process';
 import { promisify } from 'util';

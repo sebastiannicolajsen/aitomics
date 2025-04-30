@@ -5,7 +5,7 @@
  */
 
 import { $, _ } from "../src/index.js";
-import { Comparator } from "../src/comparators/comparator.js";
+import { compareMultiple } from "../src/comparators/comparator.js";
 import { KrippendorffsComparisonModel } from "../src/comparators/models/model-krippendorffs.js";
 import { generateFlowDiagram } from "../src/visualizations/generate_flow_diagram.js";
 import fs from 'fs';
@@ -71,7 +71,7 @@ const model = new KrippendorffsComparisonModel([
   "cheap"
 ]);
 
-const alpha = Comparator.compareMultiple(
+const alpha = compareMultiple(
   llmResponses,
   programmaticResponses,
   model
