@@ -71,9 +71,11 @@ export async function generateFlowDiagram(responses, config = {}) {
   // --- Helper Functions ---
   const getNodeIdAndLabel = (caller) => {
     const baseLabel = caller.name || caller.id || `Caller_${Math.random().toString(36).substring(2, 7)}`;
-    allCallerLabels.add(baseLabel.replace(/-/g, ' '));
-    let displayLabel = baseLabel.replace(/-/g, ' ');
-    const safeId = baseLabel.replace(/[^a-zA-Z0-9_]/g, '_');
+    // Ensure baseLabel is a string
+    const safeBaseLabel = String(baseLabel);
+    allCallerLabels.add(safeBaseLabel.replace(/-/g, ' '));
+    let displayLabel = safeBaseLabel.replace(/-/g, ' ');
+    const safeId = safeBaseLabel.replace(/[^a-zA-Z0-9_]/g, '_');
     const maxLineLength = 25;
     if (displayLabel.length > maxLineLength) {
         let processedLabel = '';
