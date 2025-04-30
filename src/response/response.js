@@ -1,4 +1,4 @@
-import { Caller } from "../callers/base.js";
+import { Caller, existingCallers } from "../callers/base.js";
 import { ComparisonModel } from "../comparators/comparator.js";
 
 /**
@@ -9,6 +9,9 @@ export const generatingType = Object.freeze({
   INPUT: Symbol("generatingType.input"),
   CUSTOM: Symbol("generatingType.custom"),
 });
+
+// Store for pending caller lookups
+const pendingCallerLookups = new Map();
 
 /**
  * A response to track previous transformations applied through Callers
@@ -126,9 +129,10 @@ export class Response {
     return {
       output: this.output,
       caller: this.caller.id,
-      input: this.input,
+      input: this.input instanceof Response ? this.input.toJSON() : this.input,
       root: this.root,
-      level: this.level
+      level: this.level,
+      generator: this.generator
     }
   }
 
@@ -141,14 +145,55 @@ export class Response {
     return new ComparisonModel(this, b);
   }
 
-  
-
   /**
    * Parses an Object into a Response
    * @param {Object} obj
    * @returns Response
    */
   static parse(obj) {
-    return Object.assign(new Response(), obj);
+    // Create a temporary caller object if needed
+    let caller = obj.caller;
+    if (typeof caller === 'string') {
+      const existingCaller = existingCallers[caller];
+      if (existingCaller) {
+        caller = existingCaller;
+      } else {
+        // Create a temporary caller object with just the ID
+        caller = { id: caller };
+        // Store for later lookup
+        if (!pendingCallerLookups.has(caller.id)) {
+          pendingCallerLookups.set(caller.id, new Set());
+        }
+        pendingCallerLookups.get(caller.id).add(response);
+      }
+    }
+
+    // Create the response with the caller
+    const response = new Response(obj.output, caller, obj.input, obj.generator);
+    
+    // Set additional properties
+    response.root = obj.root;
+    response.level = obj.level;
+
+    // Recursively parse input if it's a Response object
+    if (obj.input && typeof obj.input === 'object' && 'caller' in obj.input) {
+      response.input = Response.parse(obj.input);
+    }
+
+    return response;
+  }
+
+  /**
+   * Link up a caller with any pending responses
+   * @param {Caller} caller
+   */
+  static linkCaller(caller) {
+    const pendingResponses = pendingCallerLookups.get(caller.id);
+    if (pendingResponses) {
+      for (const response of pendingResponses) {
+        response.caller = caller;
+      }
+      pendingCallerLookups.delete(caller.id);
+    }
   }
 }

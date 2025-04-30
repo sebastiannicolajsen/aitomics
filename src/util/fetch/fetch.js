@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { loadFromFile, validateObject } from "../index.js";
+import { loadFromFile, validateObject } from "../helper.js";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 

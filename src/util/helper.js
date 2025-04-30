@@ -1,6 +1,9 @@
 import fs from "fs";
 import YAML from "yaml";
 import validateSchema from "yaml-schema-validator";
+import { Response } from "../response/index.js";
+
+const AITOMICS_FILE_HEADER = "AITOMICS_RESPONSE_FILE_v1";
 
 /**
  * Load YML from file, and validate according to the schema
@@ -73,4 +76,48 @@ export function parseCategorizationPromptFromYML(file) {
   validateObject(input, requiredSchema);
   input = input.prompt;
   return promptTemplate(input.description, input.values, input.default_value);
+}
+
+/**
+ * Writes one or more Response objects to a file
+ * @param {string} filepath - Path to write the file to
+ * @param {Response | Response[]} responses - Single Response or array of Responses to write
+ */
+export function writeResponses(filepath, responses) {
+  const data = {
+    _header: AITOMICS_FILE_HEADER,
+    timestamp: new Date().toISOString(),
+    responses: Array.isArray(responses) ? responses : [responses]
+  };
+  fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
+}
+
+/**
+ * Reads Response objects from a file
+ * @param {string} filepath - Path to read the file from
+ * @returns {Response[]} Array of Response objects
+ */
+export function readResponses(filepath) {
+  const content = fs.readFileSync(filepath, 'utf8');
+  const data = JSON.parse(content);
+  
+  if (data._header !== AITOMICS_FILE_HEADER) {
+    throw new Error("Invalid file format: Not an Aitomics response file");
+  }
+
+  // Helper function to recursively parse nested responses
+  function parseNestedResponse(obj) {
+    if (typeof obj === 'string') return obj;
+    
+    // Validate Response structure
+    if (!('caller' in obj) || !('input' in obj) || !('output' in obj)) {
+      throw new Error("Invalid file format: Response structure has been tampered with");
+    }
+    
+    const response = Response.parse(obj);
+    response.input = parseNestedResponse(response.input);
+    return response;
+  }
+
+  return data.responses.map(obj => parseNestedResponse(obj));
 }

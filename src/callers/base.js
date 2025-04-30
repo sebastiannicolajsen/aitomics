@@ -1,3 +1,5 @@
+import { Response } from "../response/index.js";
+
 export const existingCallers = {};
 
 /**
@@ -12,11 +14,10 @@ export class Caller {
       if (existingCallers[id]) throw new Error(`Duplicate Caller entry (${id})`);
       this.id = id;
       existingCallers[id] = this;
-      this._store = []
-    }
-
-    #store(response){
-      this._store.push(response)
+      this._store = [];
+      
+      // Link up any pending responses waiting for this caller
+      Response.linkCaller(this);
     }
 
     getAllResponses(){

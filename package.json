@@ -31,11 +31,10 @@
     "axios": "^1.8.3",
     "hash-it": "^6.0.0",
     "mermaid": "^11.6.0",
-    "yaml": "^2.7.0",
+    "yaml": "^2.7.1",
     "yaml-schema-validator": "^1.2.3"
   },
   "directories": {
     "example": "examples"
-  },
-  "devDependencies": {}
+  }
 }

@@ -14,14 +14,15 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
     - [YAML-based Prompt Configuration](#yaml-based-prompt-configuration)
     - [LLM Configuration](#llm-configuration)
   - [Visualization](#visualization)
+  - [Serialization](#serialization)
 
-## ✨ Features / TODO
+## ✨ Features
 - 🔄 Traceable transformations with linked response history
 - 🔍 Basic comparison tools for evaluating LLM outputs
 - 🛠️ Simple utility functions for common tasks
 - 🔌 Configurable LLM access
 - 📊 Flow diagram visualization of transformation pipelines
-- ❌ Response serialization for continuous data processing (TBD)
+- 💾 Response serialization for continuous data processing
 
 ## 🚀 Getting Started
 
@@ -227,3 +228,30 @@ The visualization supports several configuration options:
 - `initialInputIndex`: Specify which response to use for example data (default: 0)
 
 Using the visualization function requires a variable list of `Response` (lists) as input which is used to trace the transformation. Output is both the markdown and generated svg.
+
+### 5. 💾 Serialization
+Aitomics provides simple serialization capabilities for Response objects, allowing you to save and load transformation chains. The serialization process:
+
+- Stores responses as JSON files with a simple header for format validation
+- Preserves the complete chain of transformations
+- Maintains links to callers when they are available
+- Handles nested responses properly
+
+Basic usage:
+```js
+import { writeResponses, readResponses } from 'aitomics'
+
+// Save a response chain
+writeResponses("responses.json", response)
+
+// Load responses back
+const loadedResponses = readResponses("responses.json")
+```
+
+Important notes about caller linking:
+- It's recommended to have callers loaded before reading responses to ensure proper association
+- Callers can also be loaded after reading responses - they will be linked automatically
+- Be cautious with caller IDs: if a new caller is created with the same ID as a previously saved one, they will be treated as the same caller in the trace
+
+For a complete example of serialization usage, check out:
+- 📚 [`Response Serialization Example`](examples/ResponseSerializationExample.js) - Shows how to save and load response chains
