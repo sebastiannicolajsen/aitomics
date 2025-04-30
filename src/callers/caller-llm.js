@@ -25,7 +25,7 @@ export class LLMCaller extends Caller {
       let input = content;
       if (content instanceof Response) {
         input = content.output;
-      } else if (typeof content !== "string" && !(content instanceof String)) {
+      } else if (typeof content !== "string" && !(content instanceof String) && typeof content !== "number") {
         throw new Error(`Illegal input type '${content}'`);
       }
       const output = await fetch(input, this._context);

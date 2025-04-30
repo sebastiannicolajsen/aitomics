@@ -20,7 +20,7 @@ export class ProgrammaticCaller extends Caller {
     let input = content;
     if (content instanceof Response) {
       input = content.output;
-    } else if (typeof content !== "string" && !(content instanceof String)) {
+    } else if (typeof content !== "string" && !(content instanceof String) && typeof content !== "number") {
       if (typeof content === "promise")
         throw new Error("Unresolved future as input");
       throw new Error(`Illegal input type '${content}'`);
