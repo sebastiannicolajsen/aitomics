@@ -1,6 +1,5 @@
 import { Caller, existingCallers } from "../callers/base.js";
 import { ComparisonModel } from "../comparators/comparator.js";
-import { _ } from "../util/standard-library.js";
 
 /**
  * Generating type, i.e., programmatically generated (either using llm or function) as alternative some input
@@ -36,9 +35,12 @@ export class Response {
     this.level = this.root ? 1 : this.input.level + 1;
   }
 
-  /** for creating a response without a caller (defaults to an identity programmatic caller and uses the generatingType.CUSTOM) */
-  static create(output, input, generator = generatingType.CUSTOM) {
-    return new Response(output, _.id, input, generator);
+  /** for creating a response without a caller, if no callerName is provided, a dummy caller is created (using the name "identity"). Uses the generatingType.CUSTOM */
+  static create(output, input, callerName = null) {
+    // Create a simple identity caller that extends Caller
+    const identityCaller = new Caller(callerName === null ? "identity" : callerName);
+    identityCaller.run = async (content) => content;
+    return new Response(output, identityCaller, input, generatingType.CUSTOM);
   }
 
   /**

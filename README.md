@@ -9,6 +9,7 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
 - [Core Concepts](#core-concepts)
   - [Callers and Responses](#callers-and-responses)
     - [Response Structure](#response-structure)
+    - [Creating Responses from External Data](#creating-responses-from-external-data)
   - [Comparison Models](#comparison-models)
   - [Utilities](#utilities)
     - [YAML-based Prompt Configuration](#yaml-based-prompt-configuration)
@@ -82,6 +83,29 @@ All responses follow this structure:
   level: number
 }
 ```
+
+#### Creating Responses from External Data
+You can also create responses directly from external data using `Response.create()`. This is useful when you want to load data from other sources or create responses without using a caller:
+
+```js
+import { Response } from 'aitomics'
+
+// Create a response from external data
+const response = Response.create({
+  output: "Some data from external source",
+  input: "Original input",
+  generator: "CUSTOM"  // or "INPUT", "PROGRAMMATIC"
+})
+
+// The response will have the same structure as those created by callers
+console.log(response.output) // "Some data from external source"
+console.log(response.generator) // "CUSTOM"
+```
+
+This is particularly useful when:
+- Loading data from files or databases
+- Creating responses for comparison with LLM outputs
+- Testing or mocking responses in your application
 
 ### 2. ⚖️ Comparison Models
 Aitomics provides basic comparison tools to evaluate LLM outputs. You can use:
