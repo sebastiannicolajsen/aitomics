@@ -70,6 +70,7 @@ console.log(prev_result.output) // Some_Text_String
 Each caller must have a unique ID. If no label is provided, a hash is generated automatically. However, if you create multiple callers with the same functionality, you must provide unique labels to avoid conflicts. Different functionality callers can exist without labels, but duplicate unlabeled callers will throw an error. The label is also used for visualization purposes, helping to create clear and descriptive representations of the transformation pipeline as described in the [Visualization](#visualization) section.
 
 The example is detailed further under 📚 [`examples/SimpleApplication.js`](examples/SimpleApplication.js) 
+A complete example is also found under  📚 [`Customer Review Analysis Example`](examples/CustomerReviewAnalysisExample.js) 
 
 #### Response Structure
 All responses follow this structure:
@@ -91,11 +92,10 @@ You can also create responses directly from external data using `Response.create
 import { Response } from 'aitomics'
 
 // Create a response from external data
-const response = Response.create({
+const response = Response.create(
   output: "Some data from external source",
-  input: "Original input",
-  generator: "CUSTOM"  // or "INPUT", "PROGRAMMATIC"
-})
+  input: "Original input", // important to ensure is correct, as we cannot compare responses with different inputs.
+)
 
 // The response will have the same structure as those created by callers
 console.log(response.output) // "Some data from external source"
@@ -236,6 +236,10 @@ settings:
 The library provides a visualization tool that generates [Mermaid](https://www.mermaidchart.com/play) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:
 
 - The flow of data through different callers, with example data, if needed.
+- Caller names in the diagram: 
+  - Named callers will show their provided name
+  - Unnamed callers will show their generated ID (a hash of their function/prompt)
+  - When using `Response.create()`, you can provide a custom name to make the visualization more meaningful
 
 Here's an example of a generated diagram from the `ProductReviewMultiLabel` example:
 
@@ -245,6 +249,7 @@ Here's an example of a generated diagram from the `ProductReviewMultiLabel` exam
 
 For a complete example of how to generate such visualizations, check out:
 - 📚 [`Visualization Example`](examples/VisualizationExample.js?) - Shows how to generate and save flow diagrams
+- 📚 [`Response Create Example`](examples/ResponseCreateExample.js) - Demonstrates how to use `Response.create()` with custom names and how this affects visualization
 
 The visualization supports several configuration options:
 - `labels`: Array of labels for each flow path in the same order as the input responses array
@@ -252,6 +257,12 @@ The visualization supports several configuration options:
 - `initialInputIndex`: Specify which response to use for example data (default: 0)
 
 Using the visualization function requires a variable list of `Response` (lists) as input which is used to trace the transformation. Output is both the markdown and generated svg.
+
+**Note on Caller Names:** When creating visualizations, it's important to consider how caller names will appear:
+- For LLM and programmatic callers, always provide a meaningful name using the second parameter of `$()` to make the diagram more readable
+- For responses created with `Response.create()`, provide a custom name that reflects the data source or purpose
+- Unnamed callers will show their generated ID in the diagram, which can make it harder to understand the flow
+- Duplicate caller names (even between real and dummy callers) will be merged in the visualization
 
 ### 5. 💾 Serialization
 Aitomics provides simple serialization capabilities for Response objects, allowing you to save and load transformation chains. The serialization process:

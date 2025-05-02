@@ -75,6 +75,17 @@ export class ComparisonModel {
     if (!(model instanceof ComparisonModelBase))
       throw new Error("Model must be a ComparisonModelBase");
 
+    // Sort both arrays by root input to ensure matching
+    const sortByRootInput = (a, b) => a.rootInput() > b.rootInput() ? 1 : -1
+    responsesA.sort(sortByRootInput)
+    responsesB.sort(sortByRootInput)
+
+    // Verify that root inputs match before comparison
+    const inputsMatch = responsesA.every((ra, i) => ra.rootInput() === responsesB[i].rootInput())
+    if (!inputsMatch) {
+      throw new Error("Root inputs do not match between response arrays. Cannot perform comparison.")
+    }
+
     // Extract outputs from responses
     const outputsA = responsesA.map(r => r.output);
     const outputsB = responsesB.map(r => r.output);

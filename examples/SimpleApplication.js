@@ -32,8 +32,7 @@ console.log(result3.output) // SOME_TEXT_STRING
 // Create a response from external data
 const externalResponse = Response.create(
   "Data from external source",  // output
-  "Original input",            // input
-  "customName"        // custom caller name, useful for visualizing the response chain later (see VisualizationExample.js)
+  "Original input"             // input (which is needed if we want to compare the response with other responses, i.e., response inputs needs to match to compare)
 )
 
 // The response has the same structure as those created by callers

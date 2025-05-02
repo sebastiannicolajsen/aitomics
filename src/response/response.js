@@ -37,9 +37,20 @@ export class Response {
 
   /** for creating a response without a caller, if no callerName is provided, a dummy caller is created (using the name "identity"). Uses the generatingType.CUSTOM */
   static create(output, input, callerName = null) {
-    // Create a simple identity caller that extends Caller
-    const identityCaller = new Caller(callerName === null ? "identity" : callerName);
-    identityCaller.run = async (content) => content;
+    // Create a simple identity caller object
+    const identityCaller = {
+      id: callerName === null ? "identity" : callerName,
+      run: async (content) => content
+    };
+
+    // Cast to Caller
+    Object.setPrototypeOf(identityCaller, Caller.prototype);
+    
+    // Only warn if this is a registered caller
+    if (callerName !== null && existingCallers[identityCaller.id]) {
+      console.warn(`Warning: Duplicate caller ID '${identityCaller.id}' used when creating a response with Response.create().`);
+    }
+
     return new Response(output, identityCaller, input, generatingType.CUSTOM);
   }
 

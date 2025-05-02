@@ -1,0 +1,64 @@
+{
+  "reviews": [
+    {
+      "text": "The product arrived damaged and the customer service was unhelpful. I'm very disappointed with my purchase.",
+      "codes": ["NEGATIVE"]
+    },
+    {
+      "text": "Great quality and fast shipping! The product exceeded my expectations. Will definitely buy again.",
+      "codes": ["POSITIVE"]
+    },
+    {
+      "text": "The product works as described, but the price seems a bit high for what you get. However, the customer service was responsive when I had questions.",
+      "codes": ["NEUTRAL"]
+    },
+    {
+      "text": "I can't believe how amazing this product is! It solved all my problems and the support team was fantastic. Though it did take a while to set up.",
+      "codes": ["POSITIVE"]
+    },
+    {
+      "text": "The item was okay, nothing special. Shipping took longer than expected, but at least it arrived in good condition.",
+      "codes": ["NEUTRAL"]
+    },
+    {
+      "text": "Terrible experience. The product broke after one use and they refused to refund me. The only good thing was the quick delivery.",
+      "codes": ["NEGATIVE"]
+    },
+    {
+      "text": "This is exactly what I needed! The quality is outstanding and the price is reasonable. Though the instructions could be clearer.",
+      "codes": ["POSITIVE"]
+    },
+    {
+      "text": "The product is fine, but the instructions were unclear and the packaging was excessive. Customer service was helpful though.",
+      "codes": ["NEUTRAL"]
+    },
+    {
+      "text": "I'm extremely satisfied with my purchase. The product is durable and the service was excellent. Just wish it came in more colors.",
+      "codes": ["POSITIVE"]
+    },
+    {
+      "text": "The product was defective and the return process was a nightmare. Would not recommend. At least they eventually gave me a refund.",
+      "codes": ["NEGATIVE"]
+    },
+    {
+      "text": "It's an okay product, but I expected better quality for the price. The features are good but the build quality is questionable.",
+      "codes": ["NEUTRAL"]
+    },
+    {
+      "text": "The product works well enough, but the customer service was terrible. They were rude and unhelpful when I needed assistance.",
+      "codes": ["NEGATIVE"]
+    },
+    {
+      "text": "Not bad, but not great either. The product does what it says, but there are some minor issues that could be improved.",
+      "codes": ["NEUTRAL"]
+    },
+    {
+      "text": "I'm happy with my purchase overall. The product is good quality and the price was fair. Shipping was a bit slow though.",
+      "codes": ["POSITIVE"]
+    },
+    {
+      "text": "The product is decent, but the company's communication could be better. They didn't notify me about shipping delays.",
+      "codes": ["NEUTRAL"]
+    }
+  ]
+} 
