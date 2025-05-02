@@ -17,6 +17,7 @@ export const _ = {
     stringToJSON: $((i) => JSON.parse(i), "aitomic.stringToJSON"),
     JSONToString: $((i) => JSON.stringify(i), "aitomic.JSONToString"),
     lowerCase: $((a) => a.toLowerCase(), "aitomic.lowerCase"),
-    upperCase: $((a) => a.toUpperCase(), "aitomic.upperCase")
+    upperCase: $((a) => a.toUpperCase(), "aitomic.upperCase"),
+    id: $((i) => i, "aitomic.id")
   };
 

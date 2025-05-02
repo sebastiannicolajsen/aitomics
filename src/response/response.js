@@ -35,6 +35,11 @@ export class Response {
     this.level = this.root ? 1 : this.input.level + 1;
   }
 
+  /** for creating a response without a caller (defaults to an identity programmatic caller and uses the generatingType.CUSTOM) */
+  create(output, input, generator = generatingType.CUSTOM) {
+    return new Response(output, _.id, input, generator);
+  }
+
   /**
    * Get the caller used to create the transformation
    * @returns Caller
