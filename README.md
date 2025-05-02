@@ -97,7 +97,7 @@ Here's a basic comparison example:
 const caller1 = $("Take all words and make them elements in a JSON array")
 const caller2 = $((i) => i.toUpperCase().split(" ")) // A programmatic caller, which just applies a function to the input
 
-const input = "Some Text String"
+const input = "SOME text string"
 
 // Get results from both transformations
 const result1 = await caller1.run(input)
@@ -105,7 +105,7 @@ const result2 = await caller2.run(input)
 
 // Compare the results
 const comparison = result2.compare(result1).run(new EqualComparisonModel())
-console.log(comparison) // 0.2 (20% agreement)
+console.log(comparison) // 0.33 (3% agreement)
 ```
 
 Both `KrippendorffsComparisonModel` and `DistanceComparisonModel` support custom weight functions to fine-tune the comparison. The weight function allows you to define how different values should be weighted in the comparison, giving you more control over the agreement calculation.

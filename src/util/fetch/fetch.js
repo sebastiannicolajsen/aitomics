@@ -20,11 +20,9 @@ const requiredSchema = {
   },
 };
 
-
-
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Remove top-level await
 let llm_config = loadFromFile(__dirname + "/" + CONFIG_FILE, requiredSchema);
 
 const format = (content, role) => ({ role, content });
@@ -53,18 +51,23 @@ export const setConfigFromObject = (obj) => {
  * @returns 
  */
 export const fetch = async (content, context, config = llm_config) => {
-  if(config !== llm_config) validateObject(config)
+  if (config !== llm_config) validateObject(config);
 
   const url = `${config.path}:${config.port}/${config.endpoint}`;
+
+  // Ensure settings are sourced correctly, defaulting to llm_config if needed
+  const settings = config?.settings ?? llm_config?.settings ?? {};
+
   try {
     const response = await axios.post(
       url,
       {
-        model: llm_config.model,
-        messages: [ ...context, format(content, "user")],
-        temperature: config.settings.temperature,
-        max_tokens: config.settings.max_tokens,
-        stream: config.settings.stream,
+        model: config.model ?? llm_config.model, // Prefer config.model, fallback to llm_config.model
+        messages: [...context, format(content, "user")],
+        // Safely access settings using the resolved 'settings' object
+        temperature: settings.temperature,
+        max_tokens: settings.max_tokens,
+        stream: settings.stream,
       },
       {
         headers: {

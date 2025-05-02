@@ -1,9 +1,19 @@
 import { ComparisonModelBase } from "./base.js";
 
 /**
- * Distance is an adaptation of the following, i.e., 1 for identical answers, 0.5 for close answers (given metadata), 0 for unmatched.
- * if output is of type array, calculate for all elements in set, agreement is two-ways (i.e., disagreement when one party notices more occurences than the other, no matter who, is counted as unmatched if no closeness).
- * Thus, if an array is passed, the values which constitute the agreement (the average thereof) is n x m.
+ * Calculates similarity between two responses based on their positions in an ordered list.
+ * Returns a value between 0 and 1 representing the weighted average of element matches:
+ * - 1.0 means all elements are identical
+ * - 0.5 means elements are within the specified distance threshold
+ * - 0.0 means elements are beyond the distance threshold or not in the ordered list
+ * 
+ * The model requires an ordered list of possible values and a distance threshold.
+ * Elements are compared based on their positions in this list, allowing for
+ * "close" matches to be counted as partial agreements.
+ * 
+ * For arrays of different lengths, the comparison is based on the longer array,
+ * with missing elements counting as mismatches.
+ * 
  * Based on:
  * Amanda Barany, Nidhi Nasiar, Chelsea Porter, Andres Felipe Zambrano, Alexandra L. Andres, Dara Bright, Mamta Shah, Xiner Liu, Sabrina Gao, Jiayi Zhang, Shruti Mehta, Jaeyoon Choi, Camille Giordano, and Ryan S. Baker. 2024. Chat-GPT for Education Research: Exploring the Potential of Large Language Models for Qualitative Codebook Development. In Artificial Intelligence in Education, Andrew M. Olney, Irene-Angelica Chounta, Zitao Liu, Olga C. Santos, and Ig Ibert Bittencourt (Eds.). Springer Nature Switzerland, Cham, 134–149.
  */
@@ -35,20 +45,57 @@ export class DistanceComparisonModel extends ComparisonModelBase {
    * @returns number (0-1)
    */
   run(inputa, inputb) {
-    const a = inputa.length < inputb.length ? inputb : inputa;
-    const b = inputa.length < inputb.length ? inputa : inputb;
-
-    let sum = 0;
-    for (const e of a) {
-      const start = this.orderedList.indexOf(e);
-      let value = 0;
-      for (const f of b) {
-        value = Math.max(value, this.weightFn(e, f));
-      }
-      sum += value;
+    // Special case: empty arrays are considered identical
+    if (inputa.length === 0 && inputb.length === 0) {
+      return 1.0;
     }
 
-    return sum / Math.max(a.length, b.length);
+    // Ensure a is the longer array and b is the shorter array
+    const a = inputa.length >= inputb.length ? inputa : inputb;
+    const b = inputa.length >= inputb.length ? inputb : inputa;
+
+    // First check if any elements match at all
+    let hasAnyMatch = false;
+    for (const e of a) {
+      for (const f of b) {
+        if (this.weightFn(e, f) > 0) {
+          hasAnyMatch = true;
+          break;
+        }
+      }
+      if (hasAnyMatch) break;
+    }
+
+    // If no elements match at all, return 0
+    if (!hasAnyMatch) return 0;
+
+    // Calculate the average weight for matching elements
+    let sum = 0;
+    const usedB = new Set(); // Track which elements in b have been used
+
+    for (const e of a) {
+      let maxWeight = 0;
+      let bestMatch = null;
+
+      // Find the best unused match in b
+      for (const f of b) {
+        if (!usedB.has(f)) {
+          const weight = this.weightFn(e, f);
+          if (weight > maxWeight) {
+            maxWeight = weight;
+            bestMatch = f;
+          }
+        }
+      }
+
+      // If we found a match, mark it as used
+      if (bestMatch !== null) {
+        usedB.add(bestMatch);
+      }
+      sum += maxWeight;
+    }
+
+    return sum / a.length;
   }
 
   /**

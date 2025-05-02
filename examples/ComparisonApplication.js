@@ -20,10 +20,10 @@ console.log(result2.output) // ['SOME', 'TEXT', 'STRING']
 let comp = result2.compare(result)
 // Using here, an EqualsComparison (i.e., all elements must match)
 let comparison = comp.run(new EqualComparisonModel())
-console.log(comparison) // 0
+console.log(comparison) // 0.0 - no elements match exactly
 
 // Now recreate LLM caller where only first word is turned into uppercase:
-caller = $("Take all words and make them elements in a JSON array. Only return the JSON array. Make first word all uppercase, rest lower case. ");
+caller = $("Take all words and make them elements in a JSON array. Only return the JSON array. Make the first word all uppercase, all other words lower case. ");
 composed = _.compose(caller, _.stringToJSON)
 
 result = await composed.run(input)
@@ -32,6 +32,7 @@ console.log(result.output) // ['SOME', 'Text', 'String']
 // repeat comparison:
 comp = result2.compare(result)
 comparison = comp.run(new EqualComparisonModel())
-// Given that there are a total of 6 elements, but only agreement with a single one, meaning there's four disagreements, we get 0.2 (a fifth agreement)
-console.log(comparison) // 0.2
+// Given that we have 3 elements total, and only one matches exactly ('SOME'),
+// we get 0.33 (one third agreement)
+console.log(comparison) // 0.33
 

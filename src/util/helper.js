@@ -45,7 +45,7 @@ const requiredSchema = {
 
 let promptTemplate = (descriptions, values, default_value) => [
   ...descriptions,
-  ...values.map((v) => `'${v.label}': ${v.descriptions}`),
+  ...values.map((v) => `'${v.label}': ${v.description}`),
   `If nothing is applicable only return the value '${default_value}'`,
 ];
 

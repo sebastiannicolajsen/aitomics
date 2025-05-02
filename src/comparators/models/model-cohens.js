@@ -58,7 +58,7 @@ export class CohensComparisonModel extends ComparisonModelBase {
     }
 
     // Handle case where there are no samples
-    if (N === 0) return 0;
+    if (N === 0) return 1;  // Empty sets are in perfect agreement
 
     const P0 = (TP + TN) / N;
     
@@ -68,11 +68,16 @@ export class CohensComparisonModel extends ComparisonModelBase {
     const Pe = P1 + P2; // chance agreement
 
     // Handle case where chance agreement is 1 (perfect agreement by chance)
-    if (Pe === 1) return 0;
+    if (Pe === 1) {
+      // If there's perfect agreement (P0 = 1), return 1
+      // Otherwise, return 0 (agreement no better than chance)
+      return P0 === 1 ? 1 : 0;
+    }
 
     const kappa = (P0 - Pe) / (1 - Pe);
 
-    return Math.floor(kappa*100.0)/100;
+    // Round to 2 decimal places
+    return Math.round(kappa * 100) / 100;
   }
 
   /**

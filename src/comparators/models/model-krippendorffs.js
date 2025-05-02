@@ -3,6 +3,9 @@ import { ComparisonModelBase } from "./base.js";
 /**
  * Calculates Krippendorff's alpha between multiple reviewers' responses.
  * 
+ * This implementation is based on the k-alpha calculator (https://github.com/davide-marchiori/k-alpha),
+ * which provides a user-friendly tool for computing Krippendorff's alpha inter-rater reliability coefficient.
+ * 
  * This model implements a hybrid approach to handle both single-label and multi-label data:
  * - **Single-Label Data:** Uses the standard Krippendorff's alpha calculation for nominal data,
  *   allowing for weighted agreement between labels using the provided `weightFn` (e.g., for numeric/ordinal data).
@@ -28,17 +31,8 @@ export class KrippendorffsComparisonModel extends ComparisonModelBase {
     super(true);
     // Convert all labels to strings
     this.labels = labels.map(l => String(l));
-    // Restore weight function that handles numeric distance
-    this.weightFn = weightFn || ((k, l) => {
-      // Convert to numbers for comparison
-      const kNum = Number(k);
-      const lNum = Number(l);
-      // If either is NaN, fall back to exact string match
-      if (isNaN(kNum) || isNaN(lNum)) return k === l ? 1 : 0;
-      // For numeric values, give partial credit based on distance
-      const diff = Math.abs(kNum - lNum);
-      return diff === 0 ? 1 : diff === 1 ? 0.5 : 0;
-    });
+    // Default weight function for binary weights
+    this.weightFn = weightFn || ((k, l) => k === l ? 1 : 0);
   }
 
   /**
@@ -138,6 +132,7 @@ export class KrippendorffsComparisonModel extends ComparisonModelBase {
 
     // --- Observed Agreement (p_a) --- 
     let p_a = 0;
+    let p_e = 0;  // Declare p_e here
 
     if (isMultiLabel) {
         // --- Multi-Label Path (Jaccard) ---
@@ -154,6 +149,30 @@ export class KrippendorffsComparisonModel extends ComparisonModelBase {
             totalObservedAgreement += itemPairAgreementSum / pairCount;
         }
         p_a = totalObservedAgreement / n;
+
+        // Simplified expected agreement for multi-label
+        const labelProbs = {};
+        q.forEach(lbl => labelProbs[lbl] = 0);
+        let totalLabels = 0;
+        
+        // Calculate label probabilities
+        for (let j = 0; j < numReviewers; j++) {
+            for (let i = 0; i < n; i++) {
+                (reviewers[j][i] || []).forEach(lbl => {
+                    labelProbs[lbl]++;
+                    totalLabels++;
+                });
+            }
+        }
+        
+        // Calculate expected agreement using label probabilities
+        p_e = 0;
+        if (totalLabels > 0) {
+            q.forEach(lbl => {
+                const prob = labelProbs[lbl] / totalLabels;
+                p_e += prob * prob;
+            });
+        }
 
     } else {
         // --- Single-Label Path (Original Krippendorff with weights) ---
@@ -177,53 +196,66 @@ export class KrippendorffsComparisonModel extends ComparisonModelBase {
         const ravg = rsum / n; // Avg labels per item (should be <= numReviewers)
         if (ravg === 0) return NaN;
 
-        // Observed disagreement calculation for pairwise agreement within items
+        // Observed agreement calculation for pairwise agreement within items
         let total_p_ai = 0;
         for (let i = 0; i < n; i++) {
-            let item_disagreement = 0;
+            let item_agreement = 0;
             const numLabelsInItem = ri(i);
             if (numLabelsInItem >= 2) { // Agreement requires at least 2 labels
                 for (let k_idx = 0; k_idx < q.length; k_idx++) {
-                  for (let l_idx = k_idx; l_idx < q.length; l_idx++) {
-                      const label_k = q[k_idx];
-                      const label_l = q[l_idx];
-                      const count_k = r[i][label_k] || 0;
-                      const count_l = r[i][label_l] || 0;
-                      const weight = 1.0 - w(label_k, label_l); // Use disagreement weight
-                      if (k_idx === l_idx) {
-                          item_disagreement += count_k * (count_k - 1) * weight;
-                      } else {
-                          item_disagreement += count_k * count_l * weight * 2; // Multiply by 2 for distinct pairs
-                      }
-                  }
+                    for (let l_idx = k_idx; l_idx < q.length; l_idx++) {
+                        const label_k = q[k_idx];
+                        const label_l = q[l_idx];
+                        const count_k = r[i][label_k] || 0;
+                        const count_l = r[i][label_l] || 0;
+                        const weight = w(label_k, label_l); // Use agreement weight directly
+                        if (k_idx === l_idx) {
+                            item_agreement += count_k * (count_k - 1) * weight;
+                        } else {
+                            item_agreement += count_k * count_l * weight * 2; // Multiply by 2 for distinct pairs
+                        }
+                    }
                 }
                 // Normalize by total possible pairs within the item
-                total_p_ai += item_disagreement / (numLabelsInItem * (numLabelsInItem - 1));
+                total_p_ai += item_agreement / (numLabelsInItem * (numLabelsInItem - 1));
             }
-            // If numLabelsInItem < 2, disagreement is 0 for this item
+            // If numLabelsInItem < 2, agreement is 0 for this item
         }
-        const Do = total_p_ai / n; // Average observed disagreement
-        p_a = 1.0 - Do; // Observed agreement
-    }
+        p_a = total_p_ai / n; // Average observed agreement
 
-    // --- Expected Agreement (p_e) - Using simple sum of squared probabilities ---
-    // (Same calculation for both paths, based on overall label distribution)
-    const labelCounts = {};
-    q.forEach(lbl => labelCounts[lbl] = 0);
-    let totalLabelAssignments = 0;
-    for (let j = 0; j < numReviewers; j++) {
-        for (let i = 0; i < n; i++) {
-            (reviewers[j][i] || []).forEach(lbl => {
-                labelCounts[lbl]++;
-                totalLabelAssignments++;
-            });
+        // Calculate expected agreement for single-label
+        const labelCounts = {};
+        q.forEach(lbl => labelCounts[lbl] = 0);
+        let totalLabelAssignments = 0;
+        for (let j = 0; j < numReviewers; j++) {
+            for (let i = 0; i < n; i++) {
+                (reviewers[j][i] || []).forEach(lbl => {
+                    labelCounts[lbl]++;
+                    totalLabelAssignments++;
+                });
+            }
         }
-    }
 
-    const pi = (k) => (totalLabelAssignments === 0) ? 0 : (labelCounts[k] || 0) / totalLabelAssignments;
-    let p_e = 0;
-    for (const k of q) {
-        p_e += pi(k) * pi(k);
+        // Calculate expected agreement
+        let expected_agreement = 0;
+        const totalPairs = totalLabelAssignments * (totalLabelAssignments - 1);
+        if (totalPairs > 0) {
+            for (let k_idx = 0; k_idx < q.length; k_idx++) {
+                for (let l_idx = k_idx; l_idx < q.length; l_idx++) {
+                    const label_k = q[k_idx];
+                    const label_l = q[l_idx];
+                    const count_k = labelCounts[label_k] || 0;
+                    const count_l = labelCounts[label_l] || 0;
+                    const weight = w(label_k, label_l); // Use agreement weight directly
+                    if (k_idx === l_idx) {
+                        expected_agreement += count_k * (count_k - 1) * weight;
+                    } else {
+                        expected_agreement += count_k * count_l * weight * 2; // Multiply by 2 for distinct pairs
+                    }
+                }
+            }
+            p_e = expected_agreement / totalPairs;
+        }
     }
 
     // --- Final Alpha Calculation ---
@@ -232,7 +264,8 @@ export class KrippendorffsComparisonModel extends ComparisonModelBase {
     }
     const alpha = (p_a - p_e) / (1 - p_e);
 
-    return Math.floor(alpha * 1000) / 1000; // Format to three decimals
+    // Round to 3 decimal places, handling floating-point precision
+    return Math.round(alpha * 1000) / 1000;
   }
 
   /**

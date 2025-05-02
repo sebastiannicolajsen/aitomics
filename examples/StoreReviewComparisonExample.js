@@ -78,4 +78,4 @@ const alpha = ComparisonModel.compareMultiple(
   model
 );
 
-console.log(`\nKrippendorff's Alpha: ${alpha}`); // Expected to be moderate (around 0.5) due to programmatic caller being more conservative than LLM 
+console.log(`\nKrippendorff's Alpha: ${alpha}`); // Expected to be moderate (around 0.458) due to programmatic caller being more conservative than LLM 

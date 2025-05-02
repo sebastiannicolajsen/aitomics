@@ -2,8 +2,12 @@
 tests/
 test/
 __tests__/
+__mocks__/
+tests/__mocks__/
 *.test.js
 *.spec.js
+jest.config.js
+coverage/
 
 # Documentation
 docs/
@@ -21,7 +25,6 @@ docs/
 node_modules/
 dist/
 build/
-coverage/
 
 # Logs
 *.log
