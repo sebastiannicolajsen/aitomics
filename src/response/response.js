@@ -36,7 +36,7 @@ export class Response {
   }
 
   /** for creating a response without a caller (defaults to an identity programmatic caller and uses the generatingType.CUSTOM) */
-  create(output, input, generator = generatingType.CUSTOM) {
+  static create(output, input, generator = generatingType.CUSTOM) {
     return new Response(output, _.id, input, generator);
   }
 
