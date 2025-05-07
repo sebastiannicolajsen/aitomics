@@ -1,4 +1,4 @@
-import { mkdir, copyFile } from 'fs/promises';
+import { mkdir, copyFile, access } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,8 +16,14 @@ async function copyRules() {
         console.log(`Source: ${sourceFile}`);
         console.log(`Target: ${targetFile}`);
 
-        // Create the target directory
-        await mkdir(targetDir, { recursive: true });
+        // Check if directory exists before creating
+        try {
+            await access(targetDir);
+            console.log('Target directory already exists');
+        } catch {
+            console.log('Creating target directory...');
+            await mkdir(targetDir, { recursive: true });
+        }
         
         // Copy the rules file
         await copyFile(sourceFile, targetFile);
