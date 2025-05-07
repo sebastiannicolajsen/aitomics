@@ -281,7 +281,7 @@ For a complete example of using these utilities, check out:
 - 📚 [`Inference Confidence Example`](examples/InferenceConfidenceExample.js)
 
 ### 5. 🎨 Cursor Integration
-The library includes rules for Cursor IDE integration. The rules are automatically installed to `.cursor/rules/aitomics.rules` during package installation for code completion and suggestions.
+The library includes rules for Cursor IDE integration. After installing the package, run `npx aitomics-cursor` to install the rules to `.cursor/rules/aitomics.rules` for code completion and suggestions.
 
 ### 6. 📊 Visualization
 The library provides a visualization tool that generates [Mermaid](https://www.mermaidchart.com/play) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { mkdir, copyFile, access } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

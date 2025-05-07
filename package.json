@@ -1,9 +1,12 @@
 {
   "name": "aitomics",
-  "version": "0.1.52",
+  "version": "0.1.53",
   "description": "A small library for atomic llm operations with local models",
   "main": "./src/index.js",
   "type": "module",
+  "bin": {
+    "aitomics-cursor": "./scripts/postinstall.js"
+  },
   "files": [
     "src",
     "scripts",
