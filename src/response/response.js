@@ -63,6 +63,20 @@ export class Response {
   }
 
   /**
+   * Get the response at a given level (backtracking from current response), 0 being the previous response.
+   * @param {number} level
+   * @returns Response
+   */
+  get(level = 0){
+    let curr = this;
+    for(let i = 0; i < level; i++){
+      if(!(curr instanceof Response)) throw new Error("Cannot get a response at level " + level + " because the response at level " + (level - 1) + " was not a response.");
+      curr = curr.input;
+    }
+    return curr;
+  }
+
+  /**
    * Get the generator (i.e., the type of generator)
    * @returns generatingType
    */

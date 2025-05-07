@@ -1,11 +1,16 @@
 {
   "name": "aitomics",
-  "version": "0.1.45",
+  "version": "0.1.5",
   "description": "A small library for atomic llm operations with local models",
   "main": "./src/index.js",
   "type": "module",
+  "files": [
+    "src",
+    ".cursorrules"
+  ],
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --runInBand"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --runInBand",
+    "postinstall": "node -e \"const fs=require('fs');const path=require('path');const dir='.cursor/rules';fs.mkdirSync(dir,{recursive:true});fs.copyFileSync('.cursorrules',path.join(dir,'aitomics.rules'))\""
   },
   "repository": {
     "type": "git",

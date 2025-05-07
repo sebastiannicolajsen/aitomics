@@ -14,8 +14,13 @@ Aitomics is a simple library for interacting with local LLMs (through LM Studio)
   - [Utilities](#utilities)
     - [YAML-based Prompt Configuration](#yaml-based-prompt-configuration)
     - [LLM Configuration](#llm-configuration)
+  - [Standard Library](#standard-library)
+    - [Basic Utilities](#basic-utilities)
+    - [Analysis Utilities](#analysis-utilities)
+    - [Custom Utilities](#custom-utilities)
   - [Visualization](#visualization)
   - [Serialization](#serialization)
+  - [Cursor Integration](#cursor-integration)
 
 ## ✨ Features
 - 🔄 Traceable transformations with linked response history
@@ -232,7 +237,53 @@ settings:
   stream: false               # Whether to stream the response
 ```
 
-### 4. 📊 Visualization
+### 4. 📚 Standard Library
+The library provides a  set of utility callers through the `_` namespace that can be used to transform and analyze responses.
+
+#### Basic Utilities
+Simple transformations like:
+- `_.lowerCase` - Convert text to lowercase (in a new response)
+- `_.upperCase` - Convert text to uppercase (in a new response)
+- `_.stringToJSON` - Parse text into JSON object (in a new response)
+- `_.JSONToString` - Stringify a JSON object (in a new response)
+- `_.extract(param)` - extracts the specified param and uses that as output (in a new response)
+
+#### Analysis Utilities
+More complex utilities that analyze LLM outputs:
+- `_.inference` - Analyzes how well an LLM's response follows from its input (based on a new analysis by the same model)
+- `_.confidence` - Evaluates how confident the LLM is in its response (based on a new analysis by the same model)
+- These can be chained: `_.compose(_.inference, _.confidence)`
+- To support further comparison / IRR calculations on this, one can use `_.extract(param)` to do so.
+
+Note: Utility Callers must either receive a response with an output which is either a string, or an object with an `output` property, as it is this which will undergo analysis. 
+
+Each utility call enhances the output with additional properties (in a new response)
+```js
+{
+  output: <previous output>,
+  inference: <inference level>,
+  confidence: <confidence level>,
+  // ... any other utility-specific attributes, or any previous parts of the output object (i.e., multiple Analysis Utility Callers do not create nested output properties)
+}
+```
+
+#### Custom Utilities
+You can create your own utility callers using `createUtilityAnalysisCaller`:
+```js
+const customUtility = createUtilityAnalysisCaller({
+  name: "custom-utility",
+  variable: "custom",
+  prompt: "Your custom analysis prompt here" // which gets the previous output, input, and prompt to make its analysis
+})
+```
+
+For a complete example of using these utilities, check out:
+- 📚 [`Inference Confidence Example`](examples/InferenceConfidenceExample.js)
+
+### 5. 🎨 Cursor Integration
+The library includes rules for Cursor IDE integration. The rules are automatically installed to `.cursor/rules/aitomics.rules` during package installation for code completion and suggestions.
+
+### 6. 📊 Visualization
 The library provides a visualization tool that generates [Mermaid](https://www.mermaidchart.com/play) flow diagrams to help you understand and document your transformation pipelines. The visualization shows:
 
 - The flow of data through different callers, with example data, if needed.
@@ -264,7 +315,7 @@ Using the visualization function requires a variable list of `Response` (lists) 
 - Unnamed callers will show their generated ID in the diagram, which can make it harder to understand the flow
 - Duplicate caller names (even between real and dummy callers) will be merged in the visualization
 
-### 5. 💾 Serialization
+### 7. 💾 Serialization
 Aitomics provides simple serialization capabilities for Response objects, allowing you to save and load transformation chains. The serialization process:
 
 - Stores responses as JSON files with a simple header for format validation
@@ -290,3 +341,6 @@ Important notes about caller linking:
 
 For a complete example of serialization usage, check out:
 - 📚 [`Response Serialization Example`](examples/ResponseSerializationExample.js) - Shows how to save and load response chains
+
+For examples of using inference and confidence utilities, check out:
+- 📚 [`Inference Confidence Example`](examples/InferenceConfidenceExample.js) - Shows how to use `_.inference` and `_.confidence` to rate LLM responses

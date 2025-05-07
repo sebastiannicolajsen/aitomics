@@ -1,5 +1,5 @@
 export * from "./fetch/index.js";
-export { _ } from "./standard-library.js";
+export { _, createUtilityAnalysisCaller} from "./standard-library.js";
 export {
   loadFromFile,
   validateObject,

@@ -23,11 +23,11 @@ export class ProgrammaticCaller extends Caller {
     } else if (typeof content !== "string" && !(content instanceof String) && typeof content !== "number") {
       if (typeof content === "promise")
         throw new Error("Unresolved future as input");
-      throw new Error(`Illegal input type '${content}'`);
+      throw new Error(`Illegal input type '${content}', should be a string, number, or response`);
     }
     let result = null;
     try {
-      result = await this.fun(input);
+      result = await this.fun(input, content);
     } catch(e){
       const root = content instanceof Response ? content.rootInput() : content
       throw new Error(`Failed executing '${this.id}' for (root) input '${root}': ${e.message} `)

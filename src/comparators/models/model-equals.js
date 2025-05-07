@@ -36,7 +36,7 @@ export class EqualComparisonModel extends ComparisonModelBase {
       // Handle non-array values
       return a === b;
     }
-
+  
     /**
      * 
      * @param {[string] | string} inputa 
