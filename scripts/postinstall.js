@@ -11,8 +11,8 @@ async function copyRules() {
         // Get the package root directory (two levels up from this script)
         const packageRoot = join(__dirname, '..');
         const targetDir = join(process.cwd(), '.cursor', 'rules');
-        const sourceFile = join(packageRoot, '.cursorrules');
-        const targetFile = join(targetDir, 'aitomics.rules');
+        const sourceFile = join(packageRoot, '.cursor', 'rules', 'aitomics-rules.mdc');
+        const targetFile = join(targetDir, 'aitomics-rules.mdc');
 
         console.log('Installing Cursor rules for aitomics...');
         console.log(`Source: ${sourceFile}`);

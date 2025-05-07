@@ -1,6 +1,6 @@
 {
   "name": "aitomics",
-  "version": "0.1.53",
+  "version": "0.1.54",
   "description": "A small library for atomic llm operations with local models",
   "main": "./src/index.js",
   "type": "module",
@@ -10,7 +10,7 @@
   "files": [
     "src",
     "scripts",
-    ".cursorrules"
+    ".cursor"
   ],
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --runInBand",

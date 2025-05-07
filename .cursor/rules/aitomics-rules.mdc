@@ -1,4 +1,9 @@
-# Aitomics Library Rules and Guidelines
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Aitomics Library Rules
 
 ## Core Concepts
 
@@ -67,8 +72,8 @@ const response = Response.create({
 const comparison = result2.compare(result1).run(new EqualComparisonModel())
 
 // Good: Distance-based comparison (single response)
-const orderedList = ["very_bad", "bad", "neutral", "good", "very_good"] // Ordered list of possible values
-const maxDistance = 1 // Maximum distance for considering values as "close"
+const orderedList = ["very_bad", "bad", "neutral", "good", "very_good"]
+const maxDistance = 1
 const weightFn = (k, l) => {
   if (k === l) return 1;
   const kIndex = orderedList.indexOf(k);
@@ -80,10 +85,10 @@ const weightFn = (k, l) => {
 const comparison = result2.compare(result1).run(new DistanceComparisonModel(maxDistance, orderedList, weightFn))
 
 // Good: Multi-response comparison with Krippendorff's Alpha (single label)
-const reviewer1 = [response1, response3] // First reviewer's responses
-const reviewer2 = [response2, response4] // Second reviewer's responses
-const possibleLabels = ["positive", "negative", "neutral"] // List of possible labels
-const weightFn = (k, l) => k === l ? 1 : 0 // Optional weight function for label agreement
+const reviewer1 = [response1, response3]
+const reviewer2 = [response2, response4]
+const possibleLabels = ["positive", "negative", "neutral"]
+const weightFn = (k, l) => k === l ? 1 : 0
 const comparison = ComparisonModel.compareMultiple(
   reviewer1, 
   reviewer2, 
@@ -91,9 +96,9 @@ const comparison = ComparisonModel.compareMultiple(
 )
 
 // Good: Multi-response comparison with Cohen's Kappa (multiple labels)
-const reviewer1 = [response1, response3] // First reviewer's responses
-const reviewer2 = [response2, response4] // Second reviewer's responses
-const valueToCheck = "positive" // The specific value to check for agreement
+const reviewer1 = [response1, response3]
+const reviewer2 = [response2, response4]
+const valueToCheck = "positive"
 const comparison = ComparisonModel.compareMultiple(
   reviewer1, 
   reviewer2, 
@@ -107,7 +112,6 @@ const comparison = ComparisonModel.compareMultiple(
 - Avoid duplicate caller names
 - Consider using `showExampleData` for complex flows
 
-Example:
 ```javascript
 import { generateFlowDiagram } from 'aitomics'
 
@@ -130,20 +134,15 @@ const { markdown, diagram } = await generateFlowDiagram(
     [result3, result4]  // Second flow
   ],
   {
-    labels: ["Main Flow", "Alternative Flow"], // Labels for each flow path
-    showExampleData: true, // Show example data on arrows
-    initialInputIndex: 0 // Use first response for example data
+    labels: ["Main Flow", "Alternative Flow"],
+    showExampleData: true,
+    initialInputIndex: 0
   }
 )
 
 // Save the diagram
 fs.writeFileSync("flow-diagram.svg", diagram)
 ```
-
-### Configuration
-- Use YAML for prompt configuration
-- Override LLM settings using `setConfigFromFile` or `setConfigFromObject`
-- Default config path: `./src/util/fetch/default_config.yml`
 
 ## Configuration Templates
 
@@ -195,108 +194,27 @@ prompt:
     default_value: unknown
 ```
 
-### Usage in Project
+## Project Structure
+
+### Setup Phase
 ```javascript
-// 1. Load configurations
-import { setConfigFromFile, parseCategorizationPromptFromYML } from 'aitomics'
-
-// Load LLM settings
-setConfigFromFile("./config.yml")
-
-// Load prompt template
-const prompt = parseCategorizationPromptFromYML("./prompt.yml")
-
-// 2. Use in callers
-const analyzer = $("Analyze text", "analyzer", {
-    prompt: prompt,
-    // Additional caller-specific settings can be added here
-})
-```
-
-## Common Patterns
-
-### Basic Transformation Chain
-```javascript
-const caller1 = $("First transformation", "step1")
-const caller2 = $("Second transformation", "step2")
-const result = await _.compose(caller1, caller2).run(input)
-```
-
-### Analysis Chain
-```javascript
-const analysis = await _.compose(
-  _.inference,
-  _.confidence
-).run(result)
-```
-
-### External Data Integration
-```javascript
-const externalResponse = Response.create({
-  output: externalData,
-  input: originalInput,
-})
-```
-
-### Serialization
-```javascript
-// Save
-writeResponses("responses.json", response)
-
-// Load
-const loadedResponses = readResponses("responses.json")
-```
-
-## Error Prevention
-
-### Common Mistakes to Avoid
-1. Creating duplicate unnamed callers
-2. Not providing unique IDs for similar callers
-3. Using comparison models with incompatible data types
-4. Forgetting to handle async operations with await
-5. Not maintaining proper input/output chain in Response.create()
-
-### Validation Rules
-1. Caller IDs must be unique within the same functionality
-2. Response inputs must match for comparison
-3. Utility functions require string or object with output property
-4. Visualization requires proper caller naming
-5. Serialization requires proper caller linking
-
-## Performance Considerations
-
-### Optimization Tips
-1. Use programmatic callers for simple transformations
-2. Chain transformations using _.compose
-3. Reuse callers when possible
-4. Use appropriate comparison models for the data type
-5. Consider caching responses for repeated operations
-
-### Memory Management
-2. Use serialization for long-term storage
-5. Clean up unused callers 
-
-## Project Structure Template
-
-### 1. Setup Phase
-```javascript
-// 1.1 Configure LLM settings
+// Configure LLM settings
 import { setConfigFromFile } from 'aitomics'
 setConfigFromFile("./config.yml")
 
-// 1.2 Define core transformation callers
+// Define core transformation callers
 const textCleaner = $("Clean and normalize text", "text-cleaner")
 const sentimentAnalyzer = $("Analyze sentiment", "sentiment-analyzer")
 const topicExtractor = $("Extract main topics", "topic-extractor")
 
-// 1.3 Define utility callers
+// Define utility callers
 const customAnalyzer = createUtilityAnalysisCaller({
   name: "custom-analysis",
   variable: "analysis",
   prompt: "Your custom analysis prompt"
 })
 
-// 1.4 Define analysis chains
+// Define analysis chains
 const analysisChain = _.compose(
   textCleaner,
   sentimentAnalyzer,
@@ -305,15 +223,15 @@ const analysisChain = _.compose(
 )
 ```
 
-### 2. Data Loading Phase
+### Data Loading Phase
 ```javascript
-// 2.1 Load external data as responses
+// Load external data as responses
 const externalData = Response.create({
   output: "External data content",
-  input: "Original source",
+  input: "Original source"
 })
 
-// 2.2 Create comparison baseline if needed
+// Create comparison baseline if needed
 const baselineResponse = Response.create({
   output: "Baseline data",
   input: "Original source",
@@ -321,9 +239,9 @@ const baselineResponse = Response.create({
 })
 ```
 
-### 3. Execution Phase
+### Execution Phase
 ```javascript
-// 3.1 Process data with progress updates
+// Process data with progress updates
 console.log("Starting analysis...")
 const results = []
 for (const item of dataItems) {
@@ -331,24 +249,24 @@ for (const item of dataItems) {
   const result = await analysisChain.run(item)
   results.push(result)
   
-  // 3.2 Optional: Save intermediate results
+  // Optional: Save intermediate results
   writeResponses(`results_${item.id}.json`, result)
   
-  // 3.3 Optional: Compare with baseline during processing
+  // Optional: Compare with baseline during processing
   const comparison = result.compare(baselineResponse)
     .run(new DistanceComparisonModel(1, ["low", "medium", "high"]))
   console.log(`Agreement with baseline: ${comparison}`)
 }
 ```
 
-### 4. Finalization Phase
+### Finalization Phase
 ```javascript
-// 4.1 Save final results
+// Save final results
 writeResponses("final_results.json", results)
 
-// 4.2 Generate and save visualization
+// Generate and save visualization
 const { diagram } = await generateFlowDiagram(
-  [results], // Main flow
+  [results],
   {
     labels: ["Analysis Flow"],
     showExampleData: true
@@ -356,34 +274,35 @@ const { diagram } = await generateFlowDiagram(
 )
 fs.writeFileSync("analysis-flow.svg", diagram)
 
-// 4.3 Optional: Generate comparison report
+// Optional: Generate comparison report
 const finalComparison = ComparisonModel.compareMultiple(
   results,
   baselineResults,
-  new KrippendorffsComparisonModel(["positive", "negative", "neutral"])
+  new KrippendorffsComparisonModel(["positive", "negative", "neutral"], (k, l) => k === l ? 1 : 0)
 )
 console.log("Final agreement score:", finalComparison)
 ```
 
-### Best Practices
-1. **Setup Phase**
-   - Define all callers with meaningful names
-   - Group related transformations into chains
-   - Configure LLM settings before any execution
+## Best Practices
 
-2. **Data Loading**
-   - Use `Response.create()` for external data
-   - Maintain proper input/output chains
-   - Name responses meaningfully for visualization
+### Setup Phase
+- Define all callers with meaningful names
+- Group related transformations into chains
+- Configure LLM settings before any execution
 
-3. **Execution**
-   - Provide progress updates
-   - Save intermediate results
-   - Perform comparisons during processing
-   - Handle errors gracefully
+### Data Loading
+- Use `Response.create()` for external data
+- Maintain proper input/output chains
+- Name responses meaningfully for visualization
 
-4. **Finalization**
-   - Save all results
-   - Generate visualizations
-   - Create comparison reports
-   - Clean up temporary data 
+### Execution
+- Provide progress updates
+- Save intermediate results
+- Perform comparisons during processing
+- Handle errors gracefully
+
+### Finalization
+- Save all results
+- Generate visualizations
+- Create comparison reports
+- Clean up temporary data 
