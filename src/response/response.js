@@ -193,11 +193,6 @@ export class Response {
       } else {
         // Create a temporary caller object with just the ID
         caller = { id: caller };
-        // Store for later lookup
-        if (!pendingCallerLookups.has(caller.id)) {
-          pendingCallerLookups.set(caller.id, new Set());
-        }
-        pendingCallerLookups.get(caller.id).add(response);
       }
     }
 
@@ -211,6 +206,14 @@ export class Response {
     // Recursively parse input if it's a Response object
     if (obj.input && typeof obj.input === 'object' && 'caller' in obj.input) {
       response.input = Response.parse(obj.input);
+    }
+
+    // If we're using a temporary caller, add this response to pending lookups
+    if (typeof obj.caller === 'string' && !existingCallers[obj.caller]) {
+      if (!pendingCallerLookups.has(caller.id)) {
+        pendingCallerLookups.set(caller.id, new Set());
+      }
+      pendingCallerLookups.get(caller.id).add(response);
     }
 
     return response;

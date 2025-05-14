@@ -1,0 +1,27 @@
+{
+  "_header": "AITOMICS_RESPONSE_FILE_v1",
+  "timestamp": "2025-05-14T08:11:52.077Z",
+  "responses": [
+    {
+      "output": {
+        "MESSAGE": "HELLO WORLD"
+      },
+      "caller": "aitomic.stringToJSON",
+      "input": {
+        "output": "{\"MESSAGE\": \"HELLO WORLD\"}",
+        "caller": "aitomic.upperCase",
+        "input": {
+          "output": "{\"message\": \"hello world\"}",
+          "caller": "aitomic.lowerCase",
+          "input": "{\"message\": \"Hello World\"}",
+          "root": true,
+          "level": 1
+        },
+        "root": false,
+        "level": 2
+      },
+      "root": false,
+      "level": 3
+    }
+  ]
+}
