@@ -105,19 +105,5 @@ export function readResponses(filepath) {
     throw new Error("Invalid file format: Not an Aitomics response file");
   }
 
-  // Helper function to recursively parse nested responses
-  function parseNestedResponse(obj) {
-    if (typeof obj === 'string') return obj;
-    
-    // Validate Response structure
-    if (!('caller' in obj) || !('input' in obj) || !('output' in obj)) {
-      throw new Error("Invalid file format: Response structure has been tampered with");
-    }
-    
-    const response = Response.parse(obj);
-    response.input = parseNestedResponse(response.input);
-    return response;
-  }
-
-  return data.responses.map(obj => parseNestedResponse(obj));
+  return data.responses.map(obj => Response.parse(obj));
 }

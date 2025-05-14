@@ -197,7 +197,9 @@ export class Response {
     }
 
     // Create the response with the caller
-    const response = new Response(obj.output, caller, obj.input, obj.generator);
+    const response = !(caller instanceof Caller)
+      ? Response.create(obj.output, obj.input, obj.caller)
+      : new Response(obj.output, caller, obj.input, obj.generator);
     
     // Set additional properties
     response.root = obj.root;
@@ -209,7 +211,7 @@ export class Response {
     }
 
     // If we're using a temporary caller, add this response to pending lookups
-    if (typeof obj.caller === 'string' && !existingCallers[obj.caller]) {
+    if (!(caller instanceof Caller)) {
       if (!pendingCallerLookups.has(caller.id)) {
         pendingCallerLookups.set(caller.id, new Set());
       }
