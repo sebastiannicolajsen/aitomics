@@ -99,7 +99,7 @@ export function writeResponses(filepath, responses) {
  */
 export function readResponses(filepath) {
   const content = fs.readFileSync(filepath, 'utf8');
-  const data = JSON.parse(content);
+  const data = typeof content === 'string' ? JSON.parse(content) : content;
   
   if (data._header !== AITOMICS_FILE_HEADER) {
     throw new Error("Invalid file format: Not an Aitomics response file");

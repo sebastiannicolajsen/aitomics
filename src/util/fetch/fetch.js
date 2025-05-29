@@ -39,7 +39,7 @@ export const setConfigFromFile = (file) =>
  * @param {Object} obj 
  */
 export const setConfigFromObject = (obj) => {
-  validateObject(obj);
+  validateObject(obj, requiredSchema);
   llm_config = obj;
 };
 
