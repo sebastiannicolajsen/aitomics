@@ -127,7 +127,7 @@ export class Response {
    */
   rootInput() {
     let curr = this;
-    while (typeof curr !== "string") {
+    while (curr instanceof Response) {
       curr = curr.input;
     }
     return curr;
@@ -149,7 +149,7 @@ export class Response {
   toStringExpanded(newline = true) {
     let str = "";
     let curr = this;
-    while (typeof curr !== "string") {
+    while (curr instanceof Response) {
       str += curr + (newline ? "\n" : "");
       curr = curr.input;
     }
