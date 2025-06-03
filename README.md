@@ -1,7 +1,16 @@
 # 🧬 aitomics
 Aitomics is a simple library for interacting with local LLMs (through LM Studio) that provides traceable transformations and basic comparison of LLM outputs with programmatic or manual results. The library is designed to make it easy to work with local LLMs while maintaining transparency in your transformations.
 
-## 📑 Table of Contents
+## 🎨 Visual No-Code Solution
+
+- 🖥️ Want to use `aitomics` without writing any code? 
+- 🎯 Try the UI application that lets you:
+  - 📝 Create and manage your transformation pipelines visually
+  - 🔄 Add your own custom blocks
+  - 📊 View and analyze your results in real-time
+- 🚀 Get started [here](https://github.com/sebastiannicolajsen/aitomics-ui) ⬇️
+
+## �� Table of Contents
 - [Features](#features)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
