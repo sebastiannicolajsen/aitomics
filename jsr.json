@@ -2,5 +2,5 @@
   "name": "@aitomics/aitomics",
   "version": "0.1.59",
   "license": "MIT",
-  "exports": "./mod.ts"
+  "exports": "./src/index.js"
 }
